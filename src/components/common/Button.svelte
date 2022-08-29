@@ -9,7 +9,7 @@
   export let size: "small" | "medium" | "large" = "medium";
 
   export let textColor: Color = "white";
-  export let bgColor: Color = "redWineVingegar";
+  export let bgColor: Color = "redWineVinegar";
   export let borderColor: Color = "lemonDrop";
 
   export let type: "button" | "menu" | "reset" | "submit" = "button";
@@ -37,6 +37,7 @@
   {type}
   {disabled}
   class={classNames("button", variant, size, className)}
+  on:click
 >
   <slot />
 </button>

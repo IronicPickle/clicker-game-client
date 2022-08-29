@@ -1,7 +1,15 @@
 <script>
   import StartScreen from "./screens/StartScreen.svelte";
+
+  let screen = "start";
 </script>
 
 <main>
-  <StartScreen />
+  {#if screen === "start"}
+    <StartScreen
+      on:click={() => {
+        screen = "game";
+      }}
+    />
+  {/if}
 </main>

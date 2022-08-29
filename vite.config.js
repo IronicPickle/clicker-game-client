@@ -7,7 +7,11 @@ import path from "path";
 export default defineConfig({
   plugins: [
     svelte({
-      preprocess: sveltePreprocess(),
+      preprocess: sveltePreprocess({
+        scss: {
+          prependData: "@import './src/media/styles/index.scss';",
+        },
+      }),
     }),
   ],
   resolve: {

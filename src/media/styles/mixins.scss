@@ -1,0 +1,9 @@
+@mixin size($size) {
+  width: $size;
+  height: $size;
+
+  max-width: $size;
+  max-height: $size;
+
+  font-size: $size;
+}
