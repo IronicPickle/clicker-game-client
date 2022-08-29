@@ -1,0 +1,10 @@
+@mixin ryeFontFace($name, $weight, $style) {
+  font-family: "Rye";
+  src: url("../../media/fonts/rye/#{$name}");
+  font-weight: $weight;
+  font-style: $style;
+}
+
+@font-face {
+  @include ryeFontFace("Rye-Regular.ttf", 400, normal);
+}

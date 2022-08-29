@@ -1,0 +1,14 @@
+@mixin startdosStencilFontFace($name, $weight, $style) {
+  font-family: "Stardos Stencil";
+  src: url("../../media/fonts/stardosStencil/#{$name}");
+  font-weight: $weight;
+  font-style: $style;
+}
+
+@font-face {
+  @include startdosStencilFontFace("StardosStencil-Regular.ttf", 400, normal);
+}
+
+@font-face {
+  @include startdosStencilFontFace("StardosStencil-Bold.ttf", 700, normal);
+}

@@ -1,0 +1,14 @@
+@import "./stardosStencil.scss";
+@import "./rye.scss";
+
+@mixin stardosStencil($weight: 400, $style: normal) {
+  font-weight: $weight;
+  font-style: $style;
+  font-family: "Stardos Stencil";
+}
+
+@mixin rye($weight: 400, $style: normal) {
+  font-weight: $weight;
+  font-style: $style;
+  font-family: "Rye";
+}

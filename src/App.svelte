@@ -1,9 +1,5 @@
 <script>
-import Button from "./components/Button.svelte";
-
+  import Main from "@components/Main.svelte";
 </script>
 
-<main>
-  <Button color="blue">Test</Button>
-  
-</main>
+<Main />

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@components/*": ["./components/*"],
+
+      "@config/*": ["./config/*"],
+      "@api/*": ["./api/*"],
+
+      "@utils/*": ["./lib/utils/*"],
+      "@constants/*": ["./lib/constants/*"],
+      "@ts/*": ["./lib/ts/*"],
+      "@lib/*": ["./lib/*"],
+
+      "@images/*": ["./media/images/*"],
+      "@media/*": ["./media/*"],
+      "@styles/*": ["./styles/*"],
+
+      "@src/*": ["./*"]
+    }
+  }
+}
