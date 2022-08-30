@@ -89,6 +89,8 @@
 
       color: $text-color;
 
+      transform: translate(0.15em, -0.15em);
+
       transition-property: background-color, box-shadow, transform;
       transition-timing-function: ease;
       transition-duration: 300ms;
@@ -98,8 +100,8 @@
           background-color: $hover-bg-color;
         }
         &:active {
-          box-shadow: -0.05em 0.05em 0 0.25em $bg-color;
-          transform: translate(-0.15em, 0.15em);
+          box-shadow: -0.05em 0.05em 0 0.25em $hover-bg-color;
+          transform: translate(0, 0);
         }
       }
     }

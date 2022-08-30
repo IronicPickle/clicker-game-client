@@ -1,4 +1,4 @@
-import colors from "../constants/colors";
+import type colors from "../constants/colors";
 
 export type Color = keyof typeof colors;
 
