@@ -13,3 +13,9 @@
     />
   {/if}
 </main>
+
+<style lang="scss">
+  main {
+    background-color: $blackout;
+  }
+</style>

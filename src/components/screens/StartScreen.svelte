@@ -1,17 +1,26 @@
 <script>
   import Button from "@components/common/Button.svelte";
   import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
+
+  import { fly } from "svelte/transition";
+  import { backIn } from "svelte/easing";
 </script>
 
 <div class="start-screen">
-  <div class="shadow-wrapper">
+  <div
+    class="shadow-wrapper"
+    transition:fly={{
+      y: -(window.innerHeight / 2),
+      easing: backIn,
+      duration: 700,
+    }}
+  >
     <div class="wrapper">
       <h1 class="title">Clicker Punk</h1>
       <Button on:click>Start Game</Button>
 
-      <IoIosCog />
-
-      <IoIosCog />
+      <div class="cog-wrapper"><IoIosCog /></div>
+      <div class="cog-wrapper"><IoIosCog /></div>
     </div>
   </div>
 </div>
@@ -24,8 +33,6 @@
 
     width: 100vw;
     height: 100vh;
-
-    background-color: $blackout;
 
     .shadow-wrapper {
       border-radius: 30px;
@@ -67,7 +74,7 @@
           z-index: 100;
         }
 
-        :global(svg) {
+        .cog-wrapper {
           position: absolute;
           bottom: 0;
 
@@ -79,12 +86,27 @@
             left: 0;
 
             transform: translate(-55%, 45%);
+
+            :global(svg) {
+              animation-name: spin;
+              animation-duration: 2s;
+              animation-timing-function: ease;
+              animation-iteration-count: infinite;
+            }
           }
 
           &:last-of-type {
             right: 0;
 
             transform: translate(55%, 45%);
+
+            :global(svg) {
+              animation-name: spin;
+              animation-duration: 10s;
+              animation-timing-function: linear;
+              animation-iteration-count: infinite;
+              animation-direction: reverse;
+            }
           }
         }
       }

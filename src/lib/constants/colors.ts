@@ -6,5 +6,6 @@ export default {
   acapulcoAqua: "rgb(128, 172, 170)",
   sandalwood: "rgb(96, 85, 66)",
   wetlandsSwamp: "rgb(54, 36, 25)",
+  blackout: "rgb(12, 8, 4)",
   redWineVinegar: "rgb(110, 47, 59)",
 };
