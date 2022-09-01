@@ -1,9 +1,8 @@
-<script>
+<script lang="ts">
   import Button from "@components/common/Button.svelte";
   import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
-
-  import { fly } from "svelte/transition";
   import { backIn } from "svelte/easing";
+  import { fly } from "svelte/transition";
 </script>
 
 <div class="start-screen">
@@ -27,12 +26,16 @@
 
 <style lang="scss">
   .start-screen {
+    position: absolute;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
     width: 100vw;
     height: 100vh;
+
+    z-index: 100;
 
     .shadow-wrapper {
       border-radius: 30px;
