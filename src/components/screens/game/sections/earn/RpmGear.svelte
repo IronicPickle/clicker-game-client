@@ -36,7 +36,10 @@
   const handleClick = (event: MouseEvent) => {
     rpm.update(rpm => rpm * 2);
 
-    console.log(event.offsetX);
+    const target = event.target as HTMLDivElement;
+    console.log(target.getBoundingClientRect());
+
+    console.log(event.x, event.pageX, event.clientX, event.offsetX, event.screenX, event.movementX);
 
     sparkCoords = [
       ...sparkCoords,
