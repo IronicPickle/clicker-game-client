@@ -4,14 +4,17 @@
   export interface GlobalContext {
     screen: Writable<Screen>;
     rpm: Writable<number>;
+    isAccelerating: Writable<boolean>;
   }
 
   const screen = writable<Screen>("start");
-  const rpm = writable<number>(1);
+  const rpm = writable(1);
+  const isAccelerating = writable(false);
 
   export const defaultGlobalContext: GlobalContext = {
     screen,
     rpm,
+    isAccelerating,
   };
 
   export const getGlobalContext = () => getContext<GlobalContext>("global") ?? defaultGlobalContext;
@@ -20,7 +23,7 @@
 <script lang="ts">
   import { Writable, writable } from "svelte/store";
 
-  import { getContext, onMount, setContext } from "svelte";
+  import { getContext, setContext } from "svelte";
 
   setContext("global", defaultGlobalContext);
 </script>

@@ -1,18 +1,19 @@
 <script lang="ts">
-  import { getGlobalContext } from "@components/context/GlobalContext.svelte";
   import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
-  import { styles } from "@utils/generic";
+  import { classNames, minMax, styles } from "@utils/generic";
   import { writable } from "svelte/store";
   import { tweened } from "svelte/motion";
   import Sparks from "@components/effects/Sparks.svelte";
 
-  const { rpm } = getGlobalContext();
+  export let rpm = 0;
+  export let onClick: () => void = undefined;
+  export let isAccelerating = false;
 
   const oneMinute = 1000 * 60;
-  const duration = writable(oneMinute / $rpm / 90);
+  const duration = writable(oneMinute / rpm / 90);
 
   $: {
-    $duration = oneMinute / $rpm / 90;
+    $duration = oneMinute / rpm / 90;
   }
 
   let interval;
@@ -32,31 +33,29 @@
   }
 
   let sparkCoords: Array<{ x: number; y: number }> = [];
+  let gearWrapper: HTMLDivElement;
 
   const handleClick = (event: MouseEvent) => {
-    rpm.update(rpm => rpm * 2);
+    if (onClick) onClick();
 
-    const target = event.target as HTMLDivElement;
-    console.log(target.getBoundingClientRect());
-
-    console.log(event.x, event.pageX, event.clientX, event.offsetX, event.screenX, event.movementX);
+    const { left, top } = gearWrapper.getBoundingClientRect();
 
     sparkCoords = [
       ...sparkCoords,
       {
-        x: event.offsetX,
-        y: event.offsetY,
+        x: event.pageX - left,
+        y: event.pageY - top,
       },
     ];
 
     setTimeout(() => {
       sparkCoords = sparkCoords.slice(1);
-    }, 250);
+    }, 200);
   };
 </script>
 
-<div class="gear-wrapper">
-  <div class="click-wrapper" on:click={handleClick}>
+<div class="gear-wrapper" bind:this={gearWrapper}>
+  <div class={classNames("click-wrapper", onClick && "clickable")} on:click={handleClick}>
     <div
       class="spin-wrapper"
       style={styles({
@@ -65,18 +64,24 @@
     >
       <IoIosCog />
     </div>
-    {#each sparkCoords as sparkCoord}
-      <div
-        class="sparks-wrapper"
-        style={styles({
-          "--x": `${sparkCoord.x}px`,
-          "--y": `${sparkCoord.y}px`,
-        })}
-      >
-        <Sparks sparkColor="brimstone" />
+
+    {#if !isAccelerating && rpm > 1 && onClick}
+      <div class="grinding-sparks-wrapper">
+        <Sparks sparkColor="lemonDrop" sparkWidth={1} sparkHeight={minMax(rpm / 2, 5, 15)} />
       </div>
-    {/each}
+    {/if}
   </div>
+  {#each sparkCoords as sparkCoord}
+    <div
+      class="sparks-wrapper"
+      style={styles({
+        "--x": `${sparkCoord.x}px`,
+        "--y": `${sparkCoord.y}px`,
+      })}
+    >
+      <Sparks sparkColor="brimstone" sparkWidth={1} sparkHeight={20} />
+    </div>
+  {/each}
 </div>
 
 <style lang="scss">
@@ -91,14 +96,15 @@
       position: relative;
       display: flex;
 
-      cursor: pointer;
-      user-select: none;
+      &.clickable {
+        transform: translateY(50%) scale(1.5);
+        transition: transform 300ms ease;
+        user-select: none;
+        cursor: pointer;
 
-      transform: translateY(50%) scale(1.5);
-      transition: transform 300ms ease;
-
-      &:hover {
-        transform: translateY(50%) scale(1.6);
+        &:hover {
+          transform: translateY(50%) scale(1.6);
+        }
       }
 
       .spin-wrapper {
@@ -120,17 +126,28 @@
         }
       }
 
-      .sparks-wrapper {
-        $x: var(--x);
-        $y: var(--y);
-
+      .grinding-sparks-wrapper {
         position: absolute;
 
-        left: $x;
-        top: $y;
+        right: 15%;
+        top: 50%;
 
+        pointer-events: none;
         z-index: 100;
       }
+    }
+
+    .sparks-wrapper {
+      $x: var(--x);
+      $y: var(--y);
+
+      position: absolute;
+
+      left: $x;
+      top: $y;
+
+      pointer-events: none;
+      z-index: 100;
     }
   }
 </style>
