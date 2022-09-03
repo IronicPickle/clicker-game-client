@@ -8,11 +8,18 @@
   export let sparkWidth = 1;
   export let sparkHeight = 10;
   export let sparkColor: Color = "brimstone";
+  export let sparks = 10;
+  export let duration = 500;
 
-  const delays = [
-    223, 844, 130, 747, 928, 392, 483, 621, 814, 802, 837, 238, 642, 58, 404, 576, 944, 635, 205,
-    91, 829, 969, 861, 201, 173, 967, 548, 392, 273, 6, 1, 854, 159, 60, 986, 559,
-  ];
+  let key = Math.random();
+
+  let interval;
+  $: {
+    clearInterval(interval);
+    interval = setInterval(() => {
+      key = Math.random();
+    }, duration);
+  }
 </script>
 
 <div
@@ -23,16 +30,17 @@
     "--spark-color": `${colors[sparkColor]}`,
   })}
 >
-  {#each delays as delay}
-    <div
-      class="spark"
-      style={styles({
-        "--spark-rotate": `${randomNum(0, 380)}deg`,
-        "--spark-delay": `${delay}ms`,
-      })}
-      out:fade={{ duration: 300 }}
-    />
-  {/each}
+  {#key key}
+    {#each new Array(sparks) as _}
+      <div
+        class="spark"
+        style={styles({
+          "--spark-rotate": `${randomNum(0, 380)}deg`,
+          "--spark-delay": `${randomNum(0, duration)}ms`,
+        })}
+      />
+    {/each}
+  {/key}
 </div>
 
 <style lang="scss">
@@ -63,7 +71,7 @@
         opacity: 0;
         background-color: $sparkColor;
         transform-origin: bottom center;
-        animation: spark 0.5s infinite linear;
+        animation: spark 500ms infinite linear;
         animation-delay: $sparkDelay;
       }
     }
