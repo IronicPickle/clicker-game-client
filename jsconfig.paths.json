@@ -12,7 +12,6 @@
       "@ts/*": ["./lib/ts/*"],
       "@lib/*": ["./lib/*"],
 
-      "@images/*": ["./media/images/*"],
       "@media/*": ["./media/*"],
       "@styles/*": ["./styles/*"],
 

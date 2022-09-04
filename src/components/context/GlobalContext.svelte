@@ -8,7 +8,7 @@
   }
 
   const screen = writable<Screen>("start");
-  const rpm = writable(1);
+  const rpm = writable(0);
   const isAccelerating = writable(false);
 
   export const defaultGlobalContext: GlobalContext = {

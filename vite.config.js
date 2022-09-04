@@ -26,7 +26,6 @@ export default defineConfig({
       "@ts": path.resolve(__dirname, "./src/lib/ts"),
       "@lib": path.resolve(__dirname, "./src/lib"),
 
-      "@images": path.resolve(__dirname, "./images"),
       "@media": path.resolve(__dirname, "./media"),
       "@styles": path.resolve(__dirname, "./styles"),
 

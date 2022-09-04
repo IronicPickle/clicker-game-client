@@ -1,131 +1,133 @@
 <script lang="ts">
-  import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
-  import { classNames, generateUuid, minMax, randomNum, styles } from "@utils/generic";
+  import { classNames, minMax, randomNum, styles } from "@utils/generic";
   import { writable } from "svelte/store";
   import { tweened } from "svelte/motion";
   import Sparks from "@components/common/effects/Sparks.svelte";
   import GearIcon1 from "@components/common/media/gears/GearIcon1.svelte";
+  import type { ClassName, Style } from "@ts/generic";
+  import dayjs from "dayjs";
+  import Audio from "@components/common/generic/Audio.svelte";
 
   export let rpm = 0;
+  export let ratio = 1;
+  export let rotationDirection: "clockwise" | "counter-clockwise" = "clockwise";
   export let onClick: () => void = undefined;
   export let isAccelerating = false;
+  export let grindingSparksSide: "top" | "right" | "bottom" | "left" = undefined;
+
+  export let style: Style = undefined;
+  export let className: ClassName = undefined;
+
+  let effectiveRpm = 0;
+  $: effectiveRpm = rpm * ratio;
 
   const oneMinute = 1000 * 60;
   const degreesPerUpdate = 0.5;
-  const duration = writable(oneMinute / rpm / (360 / degreesPerUpdate));
-  $: $duration = oneMinute / rpm / (360 / degreesPerUpdate);
+  const duration = writable(oneMinute / effectiveRpm / (360 / degreesPerUpdate));
+  $: $duration = oneMinute / effectiveRpm / (360 / degreesPerUpdate);
   const sparksDuration = 300;
 
   let interval;
   let i = 0;
-  let rotation = tweened(i, {
-    duration: $duration,
-  });
+  let rotation = tweened(i);
 
   $: {
     clearInterval(interval);
 
-    interval = setInterval(() => {
-      if (i + degreesPerUpdate >= 360) i = 0;
-      else i += degreesPerUpdate;
-      rotation.set(i, { duration: i === 0 ? 0 : $duration });
-    }, $duration);
+    if (effectiveRpm > 0) {
+      interval = setInterval(() => {
+        if (i + degreesPerUpdate >= 360) i = 0;
+        else i += degreesPerUpdate;
+        rotation.set(i, { duration: $duration });
+      }, $duration);
+    }
   }
 
-  let sparkCoords: Array<{ x: number; y: number; key: string }> = [];
+  let sparkCoords: { x: number; y: number } = undefined;
+  let lastSparkDate = dayjs();
   let gearWrapper: HTMLDivElement;
 
-  $: console.log(sparkCoords);
-
   const handleClick = (event: MouseEvent) => {
-    if (onClick) onClick();
+    onClick();
+
+    const diff = dayjs().diff(lastSparkDate, "milliseconds");
+
+    if (sparkCoords || diff < randomNum(sparksDuration + 200, sparksDuration + 700)) return;
+    lastSparkDate = dayjs();
 
     const { left, top } = gearWrapper.getBoundingClientRect();
 
-    if (sparkCoords.length >= 1) return;
-
-    sparkCoords = [
-      ...sparkCoords,
-      {
-        x: event.pageX - left,
-        y: event.pageY - top,
-        key: generateUuid(),
-      },
-    ];
+    sparkCoords = {
+      x: event.pageX - left,
+      y: event.pageY - top,
+    };
 
     setTimeout(() => {
-      sparkCoords = sparkCoords.slice(1);
+      sparkCoords = undefined;
     }, sparksDuration);
   };
 </script>
 
-<div class="gear-wrapper" bind:this={gearWrapper} on:resize={event => console.log(event)}>
-  <div class={classNames("click-wrapper", onClick && "clickable")} on:click={handleClick}>
+<div class={classNames("gear-wrapper", className)} bind:this={gearWrapper} style={styles(style)}>
+  <div
+    class={classNames("click-wrapper", onClick && "clickable")}
+    on:click={onClick ? handleClick : undefined}
+  >
     <div
       class="spin-wrapper"
       style={styles({
-        "--rotation": `${$rotation}deg`,
+        "--rotation": `${rotationDirection === "clockwise" ? "" : "-"}${$rotation}deg`,
       })}
     >
       <GearIcon1 />
     </div>
 
-    {#if !isAccelerating && rpm > 1 && onClick}
-      <div class="grinding-sparks-wrapper">
+    {#if !isAccelerating && effectiveRpm > 1 && grindingSparksSide}
+      <div class={classNames("grinding-sparks-wrapper", grindingSparksSide)}>
         <Sparks
           sparkColor="lemonDrop"
           sparkWidth={1}
-          sparkHeight={minMax(rpm / 2, 10, 30)}
+          sparkHeight={minMax(effectiveRpm / 2, 10, 30) * ratio}
           sparks={30}
-          duration={minMax(rpm / 2, 20, 50) * 10}
+          duration={minMax(effectiveRpm / 2, 20, 50) * 10 * ratio}
         />
       </div>
     {/if}
   </div>
-  {#each sparkCoords as { x, y, key }}
+
+  {#if sparkCoords}
     <div
       class="sparks-wrapper"
       style={styles({
-        "--x": `${x}px`,
-        "--y": `${y}px`,
+        "--x": `${sparkCoords.x}px`,
+        "--y": `${sparkCoords.y}px`,
       })}
     >
-      {#key key}
-        <Sparks
-          sparkColor="brimstone"
-          sparkWidth={1}
-          sparkHeight={30}
-          sparks={randomNum(10, 20)}
-          duration={sparksDuration}
-        />
-      {/key}
+      <Sparks
+        sparkColor="brimstone"
+        sparkWidth={1}
+        sparkHeight={30 * ratio}
+        sparks={randomNum(5, 20)}
+        duration={sparksDuration}
+      />
     </div>
-  {/each}
+
+    <Audio src="/audio/metal_tap.mp3" playing volume={0.5} />
+  {/if}
 </div>
 
 <style lang="scss">
   .gear-wrapper {
-    position: absolute;
-
-    inset: 0;
-
     .click-wrapper {
-      position: relative;
-
-      margin: 0 auto;
-
+      width: 100%;
       height: 100%;
-      width: auto;
-      aspect-ratio: 1;
-
       &.clickable {
-        transform: translateY(50%) scale(1.5);
         transition: transform 300ms ease;
         user-select: none;
         cursor: pointer;
 
         &:hover {
-          transform: translateY(50%) scale(1.6);
+          transform: scale(1.1);
         }
       }
 
@@ -146,17 +148,36 @@
           height: 100%;
 
           color: $brimstone;
+
+          pointer-events: none;
         }
       }
 
       .grinding-sparks-wrapper {
         position: absolute;
 
-        right: 20%;
-        top: 50%;
-
         pointer-events: none;
         z-index: 100;
+
+        &.top {
+          left: 50%;
+          top: 7.5%;
+        }
+
+        &.right {
+          top: 50%;
+          right: 7.5%;
+        }
+
+        &.bottom {
+          left: 50%;
+          bottom: 7.5%;
+        }
+
+        &.left {
+          top: 50%;
+          left: 7.5%;
+        }
       }
     }
 

@@ -10,4 +10,5 @@ export default {
   wetlandsSwamp: "rgb(54, 36, 25)",
   blackout: "rgb(12, 8, 4)",
   redWineVinegar: "rgb(110, 47, 59)",
+  hotLips: "rgb(208, 52, 44)",
 };

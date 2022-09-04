@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from "@components/common/effects/Button.svelte";
+  import Button from "@components/common/generic/Button.svelte";
   import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
   import { backIn } from "svelte/easing";
   import { fly } from "svelte/transition";
