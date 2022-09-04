@@ -12,7 +12,7 @@ export const randomNum = (min: number, max: number) =>
 export const diminishNumber = (x: number, scaleFactor: number, startValue: number) =>
   Math.pow(scaleFactor, x) * startValue;
 
-export const minMax = (value: number, min: number, max: number) => {
+export const minMax = (value: number, min?: number, max?: number) => {
   if (value < min) return min;
   if (value > max) return max;
   return value;
@@ -24,3 +24,6 @@ export const generateUuid = () => {
   };
   return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
 };
+
+export const round = (value: number, decimalPlaces: number = 0) =>
+  Math.round(value * (decimalPlaces * 10)) / (decimalPlaces * 10);

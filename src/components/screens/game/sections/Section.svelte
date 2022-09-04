@@ -10,9 +10,6 @@
   .section {
     background-color: $blackout;
 
-    min-width: 0;
-    min-height: 0;
-
     margin: 10px;
 
     border-color: $lemonDrop;

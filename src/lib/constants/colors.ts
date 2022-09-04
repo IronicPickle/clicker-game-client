@@ -11,4 +11,7 @@ export default {
   blackout: "rgb(12, 8, 4)",
   redWineVinegar: "rgb(110, 47, 59)",
   hotLips: "rgb(208, 52, 44)",
+  fatalFields: "rgb(0, 132, 33)",
+  red: "rgb(255, 0, 0)",
+  uproarRed: "rgb(234, 13, 1)",
 };

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { classNames, minMax, randomNum, styles } from "@utils/generic";
+  import { classNames, minMax, randomNum, round, styles } from "@utils/generic";
   import { writable } from "svelte/store";
   import { tweened } from "svelte/motion";
   import Sparks from "@components/common/effects/Sparks.svelte";
@@ -7,6 +7,8 @@
   import type { ClassName, Style } from "@ts/generic";
   import dayjs from "dayjs";
   import Audio from "@components/common/generic/Audio.svelte";
+  import pSBC from "@utils/pSBC";
+  import colors from "@constants/colors";
 
   export let rpm = 0;
   export let ratio = 1;
@@ -18,18 +20,19 @@
   export let style: Style = undefined;
   export let className: ClassName = undefined;
 
-  let effectiveRpm = 0;
-  $: effectiveRpm = rpm * ratio;
-
   const oneMinute = 1000 * 60;
-  const degreesPerUpdate = 0.5;
-  const duration = writable(oneMinute / effectiveRpm / (360 / degreesPerUpdate));
-  $: $duration = oneMinute / effectiveRpm / (360 / degreesPerUpdate);
   const sparksDuration = 300;
 
   let interval;
   let i = 0;
   let rotation = tweened(i);
+  let duration = 0;
+  let effectiveRpm = 0;
+  let degreesPerUpdate = 0.5;
+
+  $: effectiveRpm = round(rpm * ratio, 2);
+  $: degreesPerUpdate = minMax(Math.floor((effectiveRpm / 10) * ratio), 0.5, 9);
+  $: duration = round(oneMinute / effectiveRpm / (360 / degreesPerUpdate), 2);
 
   $: {
     clearInterval(interval);
@@ -38,8 +41,8 @@
       interval = setInterval(() => {
         if (i + degreesPerUpdate >= 360) i = 0;
         else i += degreesPerUpdate;
-        rotation.set(i, { duration: $duration });
-      }, $duration);
+        rotation.set(i, { duration: i === 0 ? 0 : duration });
+      }, duration);
     }
   }
 
@@ -68,8 +71,15 @@
   };
 </script>
 
-<div class={classNames("gear-wrapper", className)} bind:this={gearWrapper} style={styles(style)}>
-  <div
+<div
+  class={classNames("gear-wrapper", className)}
+  bind:this={gearWrapper}
+  style={styles({
+    "--gear-color": pSBC(minMax(effectiveRpm, 0, 100) / 100, colors.brimstone, colors.uproarRed),
+    ...style,
+  })}
+>
+  <button
     class={classNames("click-wrapper", onClick && "clickable")}
     on:click={onClick ? handleClick : undefined}
   >
@@ -93,7 +103,7 @@
         />
       </div>
     {/if}
-  </div>
+  </button>
 
   {#if sparkCoords}
     <div
@@ -112,15 +122,21 @@
       />
     </div>
 
-    <Audio src="/audio/metal_tap.mp3" playing volume={0.5} />
+    <Audio src="/audio/metal_tap.mp3" playing volume={0.2} />
   {/if}
 </div>
 
 <style lang="scss">
   .gear-wrapper {
+    $gear-color: var(--gear-color);
+
     .click-wrapper {
       width: 100%;
       height: 100%;
+
+      background-color: transparent;
+      border: none;
+
       &.clickable {
         transition: transform 300ms ease;
         user-select: none;
@@ -147,9 +163,10 @@
           width: 100%;
           height: 100%;
 
-          color: $brimstone;
+          color: $gear-color;
 
           pointer-events: none;
+          transition: color 1000ms ease;
         }
       }
 

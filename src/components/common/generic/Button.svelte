@@ -5,7 +5,9 @@
   import { classNames, styles } from "@utils/generic";
   import pSBC from "@utils/pSBC";
 
-  export let variant: "contained" | "flat" = "contained";
+  export let on = false;
+
+  export let variant: "standard" | "flat" = "standard";
   export let size: "small" | "medium" | "large" = "medium";
 
   export let textColor: Color = "white";
@@ -19,12 +21,13 @@
   export let style: Style = undefined;
 
   const hoverDarken = {
-    contained: -0.3,
+    standard: -0.3,
     flat: 0.8,
   }[variant];
 </script>
 
 <button
+  class={classNames("button", on ? "on" : "off", variant, size, className)}
   style={styles({
     "--text-color": colors[textColor],
 
@@ -36,7 +39,6 @@
   })}
   {type}
   {disabled}
-  class={classNames("button", variant, size, className)}
   on:click
 >
   <slot />
@@ -78,7 +80,7 @@
       font-size: 24px;
     }
 
-    &.contained {
+    &.standard {
       background-color: $bg-color;
 
       border-color: $border-color;
@@ -95,13 +97,21 @@
       transition-timing-function: ease;
       transition-duration: 300ms;
 
+      @mixin active {
+        box-shadow: -0.05em 0.05em 0 0.25em $hover-bg-color;
+        transform: translate(0, 0);
+      }
+
       &:not(:disabled) {
         &:hover {
           background-color: $hover-bg-color;
         }
         &:active {
-          box-shadow: -0.05em 0.05em 0 0.25em $hover-bg-color;
-          transform: translate(0, 0);
+          @include active;
+        }
+
+        &.on {
+          @include active;
         }
       }
     }

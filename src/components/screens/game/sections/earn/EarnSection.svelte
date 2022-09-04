@@ -1,22 +1,19 @@
 <script lang="ts">
   import Audio from "@components/common/generic/Audio.svelte";
-  import Button from "@components/common/generic/Button.svelte";
-  import Light from "@components/common/generic/Light.svelte";
+  import Lamp from "@components/common/generic/Lamp.svelte";
   import { getGlobalContext } from "@components/context/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
-  import { diminishNumber } from "@utils/generic";
+  import { diminishNumber, minMax } from "@utils/generic";
   import { tweened } from "svelte/motion";
   import RpmGear from "./RpmGear.svelte";
 
-  const { rpm, isAccelerating } = getGlobalContext();
+  import IoIosBulb from "svelte-icons/io/IoIosBulb.svelte";
+  import IoIosSpeedometer from "svelte-icons/io/IoIosSpeedometer.svelte";
+  import LampButton from "@components/common/generic/LampButton.svelte";
+  import GoStop from "svelte-icons/go/GoStop.svelte";
 
-  let running = false;
-  $: running = $rpm > 0;
-
-  let smoothRpm = tweened($rpm);
-
-  $: smoothRpm.set($rpm, { duration: running ? 1000 : 0 });
+  const { rpm, isAccelerating, tweenedRpm, isRunning } = getGlobalContext();
 
   let interval;
   $: {
@@ -51,7 +48,7 @@
   />
 
   <h2 class="title">Click the Gear</h2>
-  <p class="rpm">{(Math.floor($smoothRpm * 10) / 10).toFixed(1)} RPM</p>
+  <p class="rpm">{(Math.floor($tweenedRpm * 10) / 10).toFixed(1)} RPM</p>
   <RpmGear
     rpm={$rpm}
     isAccelerating={$isAccelerating}
@@ -68,12 +65,29 @@
     grindingSparksSide="right"
   />
 
-  <div class="light-wrapper">
-    <Light on={running} lightColor="hotLips" />
+  <div class="controls-wrapper left">
+    <LampButton
+      lampColor="hotLips"
+      on={!$isRunning}
+      disabled={!$isRunning}
+      on:click={() => {
+        $rpm = 0;
+      }}
+    >
+      <GoStop />
+    </LampButton>
+    <Lamp on={$isRunning} lampColor="fatalFields">
+      <IoIosBulb />
+    </Lamp>
+  </div>
+  <div class="controls-wrapper right">
+    <Lamp on={$isAccelerating} lampColor="hotLips">
+      <IoIosSpeedometer />
+    </Lamp>
   </div>
 
-  <Audio src="/audio/gears_running.mp3" playing={running} loop volume={0.5} />
-  <Audio src="/audio/gears_stopping.mp3" playing={!running} volume={0.5} />
+  <Audio src="/audio/gears_running.mp3" playing={$isRunning} loop volume={0.5} />
+  <Audio src="/audio/gears_stopping.mp3" playing={!$isRunning} volume={0.5} />
 </Section>
 
 <style lang="scss">
@@ -85,7 +99,7 @@
 
     grid-area: earn;
 
-    min-height: 280px;
+    min-height: 300px;
 
     overflow: hidden;
 
@@ -110,21 +124,22 @@
       color: $brimstone;
     }
 
-    :global(.light-wrapper) {
+    .controls-wrapper {
       position: absolute;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 24px;
 
-      left: 0;
       bottom: 0;
       margin: 16px 20px;
 
-      .label {
-        color: $lemonDrop;
-        text-transform: uppercase;
-        font-size: 14px;
+      &.left {
+        left: 0;
+      }
+
+      &.right {
+        right: 0;
       }
     }
 
