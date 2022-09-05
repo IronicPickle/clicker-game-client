@@ -1,14 +1,13 @@
 <script lang="ts">
   import { classNames, minMax, randomNum, round, styles } from "@utils/generic";
-  import { writable } from "svelte/store";
   import { tweened } from "svelte/motion";
   import Sparks from "@components/common/effects/Sparks.svelte";
-  import GearIcon1 from "@components/common/media/gears/GearIcon1.svelte";
   import type { ClassName, Style } from "@ts/generic";
   import dayjs from "dayjs";
   import Audio from "@components/common/generic/Audio.svelte";
   import pSBC from "@utils/pSBC";
   import colors from "@constants/colors";
+  import type { SvelteComponent } from "svelte";
 
   export let rpm = 0;
   export let ratio = 1;
@@ -16,6 +15,8 @@
   export let onClick: () => void = undefined;
   export let isAccelerating = false;
   export let grindingSparksSide: "top" | "right" | "bottom" | "left" = undefined;
+
+  export let GearIcon: typeof SvelteComponent;
 
   export let style: Style = undefined;
   export let className: ClassName = undefined;
@@ -89,7 +90,7 @@
         "--rotation": `${rotationDirection === "clockwise" ? "" : "-"}${$rotation}deg`,
       })}
     >
-      <GearIcon1 />
+      <GearIcon />
     </div>
 
     {#if !isAccelerating && effectiveRpm > 1 && grindingSparksSide}

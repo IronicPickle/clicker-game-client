@@ -4,16 +4,16 @@
   import { getGlobalContext } from "@components/context/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
-  import { diminishNumber, minMax } from "@utils/generic";
-  import { tweened } from "svelte/motion";
+  import { diminishNumber } from "@utils/generic";
   import RpmGear from "./RpmGear.svelte";
 
-  import IoIosBulb from "svelte-icons/io/IoIosBulb.svelte";
-  import IoIosSpeedometer from "svelte-icons/io/IoIosSpeedometer.svelte";
-  import LampButton from "@components/common/generic/LampButton.svelte";
+  import GiLightBulb from "svelte-icons/gi/GiLightBulb.svelte";
+  import GiLightningTrio from "svelte-icons/gi/GiLightningTrio.svelte";
+
+  import CircleButton from "@components/common/generic/CircleButton.svelte";
   import GoStop from "svelte-icons/go/GoStop.svelte";
 
-  const { rpm, isAccelerating, tweenedRpm, isRunning } = getGlobalContext();
+  const { rpm, isAccelerating, tweenedRpm, isRunning, GearIcon } = getGlobalContext();
 
   let interval;
   $: {
@@ -45,6 +45,7 @@
     className="top-right"
     grindingSparksSide="bottom"
     rotationDirection="counter-clockwise"
+    GearIcon={$GearIcon}
   />
 
   <h2 class="title">Click the Gear</h2>
@@ -63,10 +64,11 @@
     }}
     className="main"
     grindingSparksSide="right"
+    GearIcon={$GearIcon}
   />
 
   <div class="controls-wrapper left">
-    <LampButton
+    <CircleButton
       lampColor="hotLips"
       on={!$isRunning}
       disabled={!$isRunning}
@@ -75,14 +77,14 @@
       }}
     >
       <GoStop />
-    </LampButton>
+    </CircleButton>
     <Lamp on={$isRunning} lampColor="fatalFields">
-      <IoIosBulb />
+      <GiLightBulb />
     </Lamp>
   </div>
   <div class="controls-wrapper right">
     <Lamp on={$isAccelerating} lampColor="hotLips">
-      <IoIosSpeedometer />
+      <GiLightningTrio />
     </Lamp>
   </div>
 
@@ -143,26 +145,25 @@
       }
     }
 
-    :global(.gear-wrapper.main) {
+    :global(.gear-wrapper) {
       position: absolute;
 
-      height: 100%;
       width: auto;
       aspect-ratio: 1;
+    }
+
+    :global(.gear-wrapper.main) {
+      height: 100%;
 
       top: 50%;
       margin: 0 auto;
     }
 
     :global(.gear-wrapper.top-right) {
-      position: absolute;
+      height: 75%;
 
       right: 0;
       top: 0;
-
-      height: 75%;
-      width: auto;
-      aspect-ratio: 1;
 
       transform: translate(50%, -50%);
     }

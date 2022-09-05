@@ -1,5 +1,6 @@
 <script lang="ts">
   import colors from "@constants/colors";
+  import App from "@src/App.svelte";
   import type { ClassName, Color, Style } from "@ts/generic";
 
   import { classNames, styles } from "@utils/generic";
@@ -7,125 +8,175 @@
 
   export let on = false;
 
-  export let variant: "standard" | "flat" = "standard";
-  export let size: "small" | "medium" | "large" = "medium";
+  export let size: string = "64px";
 
   export let textColor: Color = "white";
   export let bgColor: Color = "redWineVinegar";
-  export let borderColor: Color = "lemonDrop";
+  export let lampColor: Color | undefined = undefined;
+  export let baseColor: Color = "wetlandsSwamp";
+  export let borderColor: Color = "blackout";
+  export let rimColor: Color = "blackout";
 
   export let type: "button" | "menu" | "reset" | "submit" = "button";
   export let disabled: boolean = false;
 
   export let className: ClassName = undefined;
   export let style: Style = undefined;
-
-  const hoverDarken = {
-    standard: -0.3,
-    flat: 0.8,
-  }[variant];
 </script>
 
 <button
-  class={classNames("button", on ? "on" : "off", variant, size, className)}
+  class={classNames("button", className, on && "on", lampColor && "is-lamp")}
   style={styles({
     "--text-color": colors[textColor],
 
-    "--bg-color": colors[bgColor],
-    "--hover-bg-color": pSBC(hoverDarken, colors[bgColor]),
+    "--base-color": colors[baseColor],
+    "--hover-base-color": pSBC(-0.3, colors[baseColor]),
+
+    ...(lampColor
+      ? {
+          "--lamp-color-on": colors[lampColor],
+          "--lamp-color-off": pSBC(-0.5, colors[lampColor]),
+          "--hover-lamp-color": pSBC(-0.5, colors[lampColor]),
+        }
+      : {
+          "--lamp-color-on": pSBC(-0.5, colors[bgColor]),
+          "--lamp-color-off": colors[bgColor],
+          "--hover-lamp-color": pSBC(-0.3, colors[bgColor]),
+        }),
 
     "--border-color": colors[borderColor],
+    "--rim-color": colors[rimColor],
+
+    "--size": size,
     ...style,
   })}
   {type}
   {disabled}
   on:click
 >
-  <slot />
+  <div class="base-outer">
+    <div class="base-inner">
+      <div class="lamp">
+        <div class="text"><slot /></div>
+      </div>
+    </div>
+  </div>
 </button>
 
 <style lang="scss">
-  $text-color: var(--text-color);
+  .button {
+    $text-color: var(--text-color);
+    $rim-color: var(--rim-color);
+    $border-color: var(--border-color);
 
-  $bg-color: var(--bg-color);
-  $hover-bg-color: var(--hover-bg-color);
+    $size: var(--size);
 
-  $border-color: var(--border-color);
+    --active-lamp-color: var(--lamp-color-off);
+    --active-base-color: var(--base-color);
 
-  button {
-    height: 2em;
-
-    padding: 0 1em;
+    $active-lamp-color: var(--active-lamp-color);
+    $active-base-color: var(--active-base-color);
 
     border: none;
     background-color: transparent;
-    border-radius: 0.2em;
 
-    font-weight: 700;
+    height: $size;
+    font-size: $size;
 
-    cursor: pointer;
-    box-sizing: border-box;
+    @mixin active {
+      --active-lamp-color: var(--lamp-color-on);
+
+      &.is-lamp {
+        .base-outer {
+          .base-inner {
+            box-shadow: 0 0 1em $active-lamp-color;
+          }
+        }
+      }
+
+      .base-outer {
+        .base-inner {
+          .lamp {
+            box-shadow: -0.02em 0.02em 0 0.05em $active-lamp-color;
+            transform: translate(0.03em, -0.03em);
+          }
+        }
+      }
+    }
 
     &:disabled {
       cursor: not-allowed;
     }
 
-    &.small {
-      font-size: 14px;
-    }
-    &.medium {
-      font-size: 18px;
-    }
-    &.large {
-      font-size: 24px;
-    }
+    &:not(:disabled) {
+      cursor: pointer;
 
-    &.standard {
-      background-color: $bg-color;
-
-      border-color: $border-color;
-      border-style: ridge;
-      border-width: 0.15em;
-
-      box-shadow: -0.1em 0.1em 0 0.3em $hover-bg-color;
-
-      color: $text-color;
-
-      transform: translate(0.15em, -0.15em);
-
-      transition-property: background-color, box-shadow, transform;
-      transition-timing-function: ease;
-      transition-duration: 300ms;
-
-      @mixin active {
-        box-shadow: -0.05em 0.05em 0 0.25em $hover-bg-color;
-        transform: translate(0, 0);
+      &:hover {
+        --active-base-color: var(--hover-base-color);
       }
 
-      &:not(:disabled) {
-        &:hover {
-          background-color: $hover-bg-color;
-        }
-        &:active {
-          @include active;
-        }
-
-        &.on {
-          @include active;
-        }
+      &:hover:not(.on):not(:active) {
+        --active-lamp-color: var(--hover-lamp-color);
       }
     }
 
-    &.flat {
-      color: $text-color;
+    &:active,
+    &.on {
+      @include active;
+    }
 
-      transition-property: background-color;
+    .base-outer {
+      width: 100%;
+      height: 100%;
+
+      background-color: $active-base-color;
+      box-shadow: -0.025em 0.025em 0 0.05em $active-base-color;
+      border-radius: 0.15em;
+      border: 0.08em solid $border-color;
+
+      transform: translate(0.05em, -0.05em);
+
+      transition-property: background-color, box-shadow;
       transition-timing-function: ease;
       transition-duration: 300ms;
+      box-sizing: border-box;
 
-      &:not(:disabled) {
-        &:hover {
-          background-color: $hover-bg-color;
+      .base-inner {
+        width: 100%;
+        height: 100%;
+
+        transition: box-shadow 25ms ease;
+        box-sizing: border-box;
+
+        .lamp {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          height: 100%;
+
+          padding: 0.05em 0.25em;
+
+          background-color: $active-lamp-color;
+          box-shadow: -0.03em 0.03em 0 0.05em $active-lamp-color;
+          border: 0.04em solid $rim-color;
+          border-radius: 0.06em;
+
+          color: $text-color;
+          font-size: inherit;
+
+          transform: translate(0.045em, -0.045em);
+
+          box-sizing: border-box;
+
+          transition-property: background-color, box-shadow, transform;
+          transition-timing-function: ease;
+          transition-duration: 300ms;
+
+          .text {
+            font-weight: 700;
+            font-size: 0.4em;
+          }
         }
       }
     }

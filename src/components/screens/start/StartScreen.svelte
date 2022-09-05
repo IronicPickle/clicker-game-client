@@ -16,10 +16,18 @@
   >
     <div class="wrapper">
       <h1 class="title">Clicker Punk</h1>
-      <Button on:click>Start Game</Button>
+      <Button
+        size="128px"
+        baseColor="wetlandsSwamp"
+        bgColor="redWineVinegar"
+        rimColor="lemonDrop"
+        on:click>Start Game</Button
+      >
 
-      <div class="cog-wrapper"><IoIosCog /></div>
-      <div class="cog-wrapper"><IoIosCog /></div>
+      <div class="cogs">
+        <div class="cog-wrapper"><IoIosCog /></div>
+        <div class="cog-wrapper"><IoIosCog /></div>
+      </div>
     </div>
   </div>
 </div>
@@ -71,7 +79,7 @@
           z-index: 100;
         }
 
-        :global(.button) {
+        :global(.button-wrapper) {
           font-size: 64px;
 
           z-index: 100;
@@ -83,7 +91,7 @@
 
           @include size(512px);
 
-          color: $lemonDrop;
+          color: $brimstone;
 
           &:first-of-type {
             left: 0;

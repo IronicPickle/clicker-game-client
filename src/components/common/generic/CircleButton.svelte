@@ -10,7 +10,10 @@
   export let size: string = "64px";
   export let iconColor: Color = "blackout";
   export let baseColor: Color = "wetlandsSwamp";
-  export let lampColor: Color = "hotLips";
+  export let bgColor: Color = "redWineVinegar";
+  export let lampColor: Color | undefined = undefined;
+  export let borderColor: Color = "blackout";
+  export let rimColor: Color = "blackout";
 
   export let type: "button" | "menu" | "reset" | "submit" = "button";
   export let disabled: boolean = false;
@@ -20,14 +23,29 @@
 </script>
 
 <button
-  class={classNames("lamp-button", className, on ? "on" : "off")}
+  class={classNames("circle-button", className, on && "on", lampColor && "is-lamp")}
   style={styles({
     "--icon-color": colors[iconColor],
     "--hover-icon-color": pSBC(-0.3, colors[iconColor]),
+
     "--base-color": colors[baseColor],
     "--hover-base-color": pSBC(-0.3, colors[baseColor]),
-    "--lamp-color-off": pSBC(-0.5, colors[lampColor]),
-    "--lamp-color-on": colors[lampColor],
+
+    ...(lampColor
+      ? {
+          "--lamp-color-on": colors[lampColor],
+          "--lamp-color-off": pSBC(-0.5, colors[lampColor]),
+          "--hover-lamp-color": pSBC(-0.5, colors[lampColor]),
+        }
+      : {
+          "--lamp-color-on": pSBC(-0.5, colors[bgColor]),
+          "--lamp-color-off": colors[bgColor],
+          "--hover-lamp-color": pSBC(-0.3, colors[bgColor]),
+        }),
+
+    "--border-color": colors[borderColor],
+    "--rim-color": colors[rimColor],
+
     "--size": size,
     ...style,
   })}
@@ -47,8 +65,9 @@
 </button>
 
 <style lang="scss">
-  .lamp-button {
-    $lamp-rim-color: $blackout;
+  .circle-button {
+    $rim-color: var(--rim-color);
+    $border-color: var(--border-color);
 
     $size: var(--size);
 
@@ -62,30 +81,27 @@
 
     border: none;
     background-color: transparent;
-    border-radius: 50%;
-    box-shadow: -0.02em 0.02em 0.4em $blackout;
 
     width: $size;
     height: $size;
     font-size: $size;
 
     @mixin active {
-      box-shadow: 0 0 0 0 $active-lamp-color;
-      transform: translate(0, 0);
-    }
-
-    &.off {
-      --active-lamp-color: var(--lamp-color-off);
-    }
-
-    &.on {
       --active-lamp-color: var(--lamp-color-on);
+
+      &.is-lamp {
+        .base-outer {
+          .base-inner {
+            box-shadow: 0 0 1em $active-lamp-color;
+          }
+        }
+      }
 
       .base-outer {
         .base-inner {
-          box-shadow: 0 0 1em $active-lamp-color;
           .lamp-outer {
-            @include active;
+            box-shadow: 0 0 0 0 $active-lamp-color;
+            transform: translate(0, 0);
           }
         }
       }
@@ -111,13 +127,15 @@
         --active-base-color: var(--hover-base-color);
         --active-icon-color: var(--hover-icon-color);
       }
-      &:active {
-        .base {
-          .lamp-outer {
-            @include active;
-          }
-        }
+
+      &:hover:not(.on):not(:active) {
+        --active-lamp-color: var(--hover-lamp-color);
       }
+    }
+
+    &:active,
+    &.on {
+      @include active;
     }
 
     .base-outer {
@@ -125,20 +143,24 @@
       box-shadow: -0.02em 0.02em 0 0.06em $active-base-color;
       transform: translate(0.06em, -0.06em);
 
-      transition: box-shadow 300ms ease;
+      transition-property: background-color, box-shadow;
+      transition-timing-function: ease;
+      transition-duration: 300ms;
 
       .base-inner {
-        border: 0.04em solid $lamp-rim-color;
+        border: 0.04em solid $border-color;
+
+        transition: box-shadow 25ms ease;
 
         .lamp-outer {
-          transition-property: box-shadow, transform;
+          background-color: $active-lamp-color;
+          box-shadow: -0.02em 0.02em 0 0 $active-lamp-color;
+
+          transform: translate(0.02em, -0.02em);
+
+          transition-property: background-color, box-shadow, transform;
           transition-timing-function: ease;
           transition-duration: 300ms;
-
-          background-color: $active-lamp-color;
-
-          box-shadow: -0.02em 0.02em 0 0 $active-lamp-color;
-          transform: translate(0.02em, -0.02em);
 
           .lamp-inner {
             position: absolute;
@@ -152,7 +174,7 @@
             top: 0.04em;
             right: 0.04em;
 
-            border: 0.03em solid $lamp-rim-color;
+            border: 0.03em solid $rim-color;
 
             :global(*) {
               width: 0.5em;

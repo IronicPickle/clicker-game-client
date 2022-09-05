@@ -11,6 +11,8 @@
   export let iconColor: Color = "blackout";
   export let baseColor: Color = "wetlandsSwamp";
   export let lampColor: Color = "hotLips";
+  export let borderColor: Color = "blackout";
+  export let cageColor: Color = "blackout";
 
   export let className: ClassName = undefined;
   export let style: Style = undefined;
@@ -23,6 +25,8 @@
     "--base-color": colors[baseColor],
     "--lamp-color-off": pSBC(-0.5, colors[lampColor]),
     "--lamp-color-on": colors[lampColor],
+    "--border-color": colors[borderColor],
+    "--cage-color": colors[cageColor],
     "--size": size,
     ...style,
   })}
@@ -75,27 +79,27 @@
   .lamp {
     $icon-color: var(--icon-color);
     $base-color: var(--base-color);
-    $lamp-color-off: var(--lamp-color-off);
-    $lamp-color-on: var(--lamp-color-on);
     $size: var(--size);
-    $lamp-rim-color: $blackout;
 
-    $lamp-color: var(--lamp-color);
+    $cage-color: var(--border-color);
+    $border-color: var(--border-color);
+
+    $active-lamp-color: var(--active-lamp-color);
 
     width: $size;
     height: $size;
     font-size: $size;
 
     &.off {
-      --lamp-color: var(--lamp-color-off);
+      --active-lamp-color: var(--lamp-color-off);
     }
 
     &.on {
-      --lamp-color: var(--lamp-color-on);
+      --active-lamp-color: var(--lamp-color-on);
 
       .base-outer {
         .base-inner {
-          box-shadow: 0 0 1em $lamp-color-on;
+          box-shadow: 0 0 1em $active-lamp-color;
         }
       }
     }
@@ -117,7 +121,7 @@
     .base-outer {
       position: relative;
 
-      background-color: $lamp-color;
+      background-color: $active-lamp-color;
       box-shadow: -0.02em 0.02em 0 0.06em $base-color;
       transform: translate(0.06em, -0.06em);
 
@@ -125,7 +129,7 @@
         position: relative;
         overflow: hidden;
 
-        border: 0.04em solid $lamp-rim-color;
+        border: 0.04em solid $border-color;
 
         .lamp-outer {
           transition: box-shadow 25ms linear;
@@ -144,8 +148,8 @@
             top: 0.05em;
             right: 0.05em;
 
-            border: 0.03em solid $lamp-rim-color;
-            background-color: $lamp-color;
+            border: 0.03em solid $cage-color;
+            background-color: $active-lamp-color;
 
             z-index: 100;
 
@@ -156,9 +160,9 @@
               height: 0.4em;
               padding: 0.04em;
 
-              background-color: $lamp-color;
+              background-color: $active-lamp-color;
               border-radius: 50%;
-              border: 0.03em solid $lamp-rim-color;
+              border: 0.03em solid $cage-color;
 
               color: $icon-color;
 
@@ -169,7 +173,7 @@
               position: absolute;
               .brace {
                 position: absolute;
-                border-color: $lamp-rim-color;
+                border-color: $cage-color;
                 border-width: 0.03em;
 
                 &.vertical {
@@ -212,7 +216,7 @@
           position: absolute;
           .strut {
             position: absolute;
-            border-color: $lamp-rim-color;
+            border-color: $cage-color;
             border-width: 0.03em;
 
             &.top {

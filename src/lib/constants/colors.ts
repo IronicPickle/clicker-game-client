@@ -14,4 +14,6 @@ export default {
   fatalFields: "rgb(0, 132, 33)",
   red: "rgb(255, 0, 0)",
   uproarRed: "rgb(234, 13, 1)",
+
+  transparent: "transparent",
 };
