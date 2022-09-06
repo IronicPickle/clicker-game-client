@@ -1,6 +1,5 @@
 <script lang="ts">
   import { classNames, minMax, randomNum, round, styles } from "@utils/generic";
-  import { tweened } from "svelte/motion";
   import Sparks from "@components/common/effects/Sparks.svelte";
   import type { ClassName, Style } from "@ts/generic";
   import dayjs from "dayjs";
@@ -26,14 +25,14 @@
 
   let interval;
   let i = 0;
-  let rotation = tweened(i);
+  let rotation = i;
   let duration = 0;
   let effectiveRpm = 0;
   let degreesPerUpdate = 0.5;
 
   $: effectiveRpm = round(rpm * ratio, 2);
   $: degreesPerUpdate = minMax(Math.floor((effectiveRpm / 10) * ratio), 0.5, 9);
-  $: duration = round(oneMinute / effectiveRpm / (360 / degreesPerUpdate), 2);
+  $: duration = minMax(round(oneMinute / effectiveRpm / (360 / degreesPerUpdate), 2), 5);
 
   $: {
     clearInterval(interval);
@@ -42,7 +41,7 @@
       interval = setInterval(() => {
         if (i + degreesPerUpdate >= 360) i = 0;
         else i += degreesPerUpdate;
-        rotation.set(i, { duration: i === 0 ? 0 : duration });
+        rotation = i;
       }, duration);
     }
   }
@@ -87,7 +86,7 @@
     <div
       class="spin-wrapper"
       style={styles({
-        "--rotation": `${rotationDirection === "clockwise" ? "" : "-"}${$rotation}deg`,
+        "--rotation": `${rotationDirection === "clockwise" ? "" : "-"}${rotation}deg`,
       })}
     >
       <GearIcon />

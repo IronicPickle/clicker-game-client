@@ -13,8 +13,8 @@
 
   const screen = writable<Screen>("start");
   const rpm = writable(0);
-  const isAccelerating = writable(false);
   const tweenedRpm = tweened(0);
+  const isAccelerating = writable(false);
   const isRunning = writable(false);
 
   const GearIcon = writable<typeof SvelteComponent>(null);
@@ -40,8 +40,8 @@
   import _GearIcon from "@components/common/media/gears/GearIcon1.svelte";
 
   $: $isRunning = $rpm > 0;
-  $: tweenedRpm.set($rpm, { duration: $isRunning ? 1000 : 0 });
   $: $GearIcon = _GearIcon;
+  $: tweenedRpm.set($rpm, { duration: 500 });
 
   setContext("global", defaultGlobalContext);
 </script>

@@ -4,14 +4,15 @@
   import { getGlobalContext } from "@components/context/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
-  import { diminishNumber } from "@utils/generic";
-  import RpmGear from "./RpmGear.svelte";
+  import { diminishNumber, round } from "@utils/generic";
+  import RpmGear from "../../../../common/generic/RpmGear.svelte";
 
   import GiLightBulb from "svelte-icons/gi/GiLightBulb.svelte";
   import GiLightningTrio from "svelte-icons/gi/GiLightningTrio.svelte";
 
   import CircleButton from "@components/common/generic/CircleButton.svelte";
   import GoStop from "svelte-icons/go/GoStop.svelte";
+  import RpmCounter from "./RpmCounter.svelte";
 
   const { rpm, isAccelerating, tweenedRpm, isRunning, GearIcon } = getGlobalContext();
 
@@ -49,7 +50,8 @@
   />
 
   <h2 class="title">Click the Gear</h2>
-  <p class="rpm">{(Math.floor($tweenedRpm * 10) / 10).toFixed(1)} RPM</p>
+  <RpmCounter />
+
   <RpmGear
     rpm={$rpm}
     isAccelerating={$isAccelerating}
@@ -83,7 +85,7 @@
     </Lamp>
   </div>
   <div class="controls-wrapper right">
-    <Lamp on={$isAccelerating} lampColor="hotLips">
+    <Lamp on={$isAccelerating} lampColor="brimstone">
       <GiLightningTrio />
     </Lamp>
   </div>
@@ -115,15 +117,6 @@
       color: $white;
 
       z-index: 100;
-    }
-
-    .rpm {
-      align-self: flex-start;
-
-      margin: -2px 0 0 36px;
-
-      font-size: 18px;
-      color: $brimstone;
     }
 
     .controls-wrapper {

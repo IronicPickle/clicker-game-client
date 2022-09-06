@@ -1,8 +1,9 @@
 <script>
+  import RpmGear from "@components/common/generic/RpmGear.svelte";
+
   import { getGlobalContext } from "@components/context/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
-  import RpmGear from "../earn/RpmGear.svelte";
 
   const { rpm, isAccelerating, GearIcon } = getGlobalContext();
 </script>
@@ -13,7 +14,6 @@
     ratio={2}
     isAccelerating={$isAccelerating}
     className="right"
-    grindingSparksSide="top"
     rotationDirection="clockwise"
     GearIcon={$GearIcon}
   />
@@ -22,7 +22,6 @@
     ratio={0.5}
     isAccelerating={$isAccelerating}
     className="bottom-left"
-    grindingSparksSide="right"
     rotationDirection="clockwise"
     GearIcon={$GearIcon}
   />
