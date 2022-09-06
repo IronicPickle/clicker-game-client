@@ -2,11 +2,10 @@
   import { classNames, minMax, randomNum, round, styles } from "@utils/generic";
   import Sparks from "@components/common/effects/Sparks.svelte";
   import type { ClassName, Style } from "@ts/generic";
-  import dayjs from "dayjs";
-  import Audio from "@components/common/generic/Audio.svelte";
   import pSBC from "@utils/pSBC";
   import colors from "@constants/colors";
   import type { SvelteComponent } from "svelte";
+  import { Howl, Howler } from "howler";
 
   export let rpm = 0;
   export let ratio = 1;
@@ -46,27 +45,31 @@
     }
   }
 
-  let sparkCoords: { x: number; y: number } = undefined;
-  let lastSparkDate = dayjs();
+  let sparkCoords: Array<{ x: number; y: number }> = [];
   let gearWrapper: HTMLDivElement;
+
+  const metalTap = new Howl({
+    src: ["/audio/metal_tap.mp3"],
+    volume: 0.2,
+  });
 
   const handleClick = (event: MouseEvent) => {
     onClick();
 
-    const diff = dayjs().diff(lastSparkDate, "milliseconds");
-
-    if (sparkCoords || diff < randomNum(sparksDuration + 200, sparksDuration + 700)) return;
-    lastSparkDate = dayjs();
+    metalTap.play();
 
     const { left, top } = gearWrapper.getBoundingClientRect();
 
-    sparkCoords = {
-      x: event.pageX - left,
-      y: event.pageY - top,
-    };
+    sparkCoords = [
+      ...sparkCoords,
+      {
+        x: event.pageX - left,
+        y: event.pageY - top,
+      },
+    ];
 
     setTimeout(() => {
-      sparkCoords = undefined;
+      sparkCoords = sparkCoords.slice(1);
     }, sparksDuration);
   };
 </script>
@@ -105,30 +108,34 @@
     {/if}
   </button>
 
-  {#if sparkCoords}
+  {#each sparkCoords as { x, y }}
     <div
       class="sparks-wrapper"
       style={styles({
-        "--x": `${sparkCoords.x}px`,
-        "--y": `${sparkCoords.y}px`,
+        "--x": `${x}px`,
+        "--y": `${y}px`,
       })}
     >
       <Sparks
         sparkColor="brimstone"
         sparkWidth={1}
         sparkHeight={30 * ratio}
-        sparks={randomNum(5, 20)}
+        sparks={randomNum(5, 10)}
         duration={sparksDuration}
       />
     </div>
-
-    <Audio src="/audio/metal_tap.mp3" playing volume={0.2} />
-  {/if}
+  {/each}
 </div>
 
 <style lang="scss">
   .gear-wrapper {
     $gear-color: var(--gear-color);
+
+    touch-action: manipulation;
+
+    & * {
+      touch-action: manipulation;
+    }
 
     .click-wrapper {
       width: 100%;

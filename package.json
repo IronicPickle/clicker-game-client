@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
+    "@types/howler": "^2.2.7",
     "sass": "^1.54.5",
     "svelte": "^3.49.0",
     "svelte-preprocess": "^4.10.7",
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "dayjs": "^1.11.5",
+    "howler": "^2.2.3",
     "svelte-icons": "^2.1.0"
   }
 }

@@ -106,6 +106,7 @@
     min-height: 300px;
 
     overflow: hidden;
+    touch-action: manipulation;
 
     .title {
       align-self: flex-start;
