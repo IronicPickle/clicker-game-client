@@ -4,7 +4,7 @@
   import { getGlobalContext } from "@components/context/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
-  import { diminishNumber, round } from "@utils/generic";
+  import { diminishNumber } from "@utils/generic";
   import RpmGear from "../../../../common/generic/RpmGear.svelte";
 
   import GiLightBulb from "svelte-icons/gi/GiLightBulb.svelte";
@@ -14,28 +14,7 @@
   import GoStop from "svelte-icons/go/GoStop.svelte";
   import RpmCounter from "./RpmCounter.svelte";
 
-  const { rpm, isAccelerating, tweenedRpm, isRunning, GearIcon } = getGlobalContext();
-
-  let interval;
-  $: {
-    clearInterval(interval);
-    interval = setInterval(() => {
-      rpm.update(rpm => {
-        let newRpm = rpm - 0.5;
-        if (newRpm < 0) newRpm = 0;
-        return newRpm;
-      });
-    }, 1000);
-  }
-
-  let timeout;
-  $: {
-    $rpm;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      $isAccelerating = false;
-    }, 500);
-  }
+  const { rpm, isAccelerating, isRunning, GearIcon } = getGlobalContext();
 </script>
 
 <Section className="earn">
@@ -90,8 +69,8 @@
     </Lamp>
   </div>
 
-  <Audio src="/audio/gears_running.mp3" playing={$isRunning} loop volume={0.5} />
-  <Audio src="/audio/gears_stopping.mp3" playing={!$isRunning} volume={0.5} />
+  <Audio src="/audio/gears_running.mp3" html5 playing={$isRunning} loop volume={0.5} />
+  <Audio src="/audio/gears_stopping.mp3" html5 playing={!$isRunning} volume={0.5} />
 </Section>
 
 <style lang="scss">

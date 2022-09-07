@@ -50,7 +50,7 @@
 
   const metalTap = new Howl({
     src: ["/audio/metal_tap.mp3"],
-    volume: 0.2,
+    volume: 0.05,
   });
 
   const handleClick = (event: MouseEvent) => {

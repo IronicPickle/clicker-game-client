@@ -39,9 +39,33 @@
   import { Tweened, tweened } from "svelte/motion";
   import _GearIcon from "@components/common/media/gears/GearIcon1.svelte";
 
+  const rpmReductionInterval = 1000;
+  const rpmReductionRate = 0.5;
+
   $: $isRunning = $rpm > 0;
   $: $GearIcon = _GearIcon;
-  $: tweenedRpm.set($rpm, { duration: 500 });
+  $: tweenedRpm.set($rpm, { duration: rpmReductionInterval });
+
+  let interval;
+  $: {
+    clearInterval(interval);
+    interval = setInterval(() => {
+      rpm.update(rpm => {
+        let newRpm = rpm - rpmReductionRate;
+        if (newRpm < 0) newRpm = 0;
+        return newRpm;
+      });
+    }, rpmReductionInterval);
+  }
+
+  let timeout;
+  $: {
+    $rpm;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      $isAccelerating = false;
+    }, rpmReductionInterval);
+  }
 
   setContext("global", defaultGlobalContext);
 </script>

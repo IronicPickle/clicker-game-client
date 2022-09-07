@@ -1,48 +1,49 @@
 <script lang="ts">
+  import { Howl } from "howler";
+
   export let src: string;
-  export let type = "/audio/mp3";
   export let volume = 1;
-  export let playbackRate = 1;
-  export let autoplay = true;
+  export let html5 = false;
   export let loop = false;
+  export let preload = false;
+  export let autoplay = false;
+  export let mute = false;
+  export let rate = 1;
 
   export let playing = false;
+  export let stopped = false;
 
-  let audioElement: HTMLAudioElement | undefined;
+  const audio = new Howl({
+    src: [src],
+    volume,
+    html5,
+    loop,
+    preload,
+    autoplay,
+    mute,
+    rate,
+  });
 
+  $: stopped ? audio.stop() : playing ? audio.play() : audio.pause();
+  $: audio.volume(volume);
+  $: audio.loop(loop);
+  $: audio.mute(mute);
+  $: audio.rate(rate);
+
+  let interval;
+  const buffer = 0.2 * rate;
   $: {
-    if (audioElement) {
-      if (playing) {
-        audioElement.load();
-        audioElement.play();
-      } else audioElement.pause();
+    clearInterval(interval);
+
+    if (playing && !stopped && loop) {
+      interval = setInterval(() => {
+        if (audio.seek() > audio.duration() - buffer) {
+          audio.seek(0);
+        }
+      }, (buffer / 2) * 1000);
     }
-  }
-
-  $: {
-    if (audioElement) {
-      audioElement.defaultPlaybackRate = playbackRate;
-      audioElement.playbackRate = playbackRate;
-    }
-  }
-
-  let currentTime = 0;
-  let duration = 0;
-
-  $: {
-    const buffer = 0.1 * playbackRate;
-    if (currentTime > duration - buffer && playing && audioElement && loop) {
-      audioElement.currentTime = 0;
-      audioElement.play();
-    }
-  }
-
-  $: {
-    if (audioElement) audioElement.volume = volume;
   }
 </script>
-
-<audio bind:currentTime bind:duration bind:this={audioElement} {src} {type} {autoplay} {loop} />
 
 <style lang="scss">
   audio {
