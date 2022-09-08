@@ -1,3 +1,5 @@
+import type { Writable } from "svelte/store";
+
 export const styles = (styles: Record<string, any> = {}) =>
   Object.entries(styles)
     .map(([key, value]) => `${key}: ${value};`)
@@ -27,3 +29,8 @@ export const generateUuid = () => {
 
 export const round = (value: number, decimalPlaces: number = 0) =>
   Math.round(value * (decimalPlaces * 10)) / (decimalPlaces * 10);
+
+export const pickRandomFromArray = <V>(array: V[]): V => array[randomNum(0, array.length - 1)];
+
+export const pickRandomFromEnum = <V>(_enum: Record<string, V>): V =>
+  pickRandomFromArray(Object.values(_enum));

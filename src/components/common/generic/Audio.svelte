@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Howl } from "howler";
+  import { onDestroy } from "svelte";
 
   export let src: string;
   export let volume = 1;
@@ -43,6 +44,10 @@
       }, (buffer / 2) * 1000);
     }
   }
+
+  onDestroy(() => {
+    audio.stop();
+  });
 </script>
 
 <style lang="scss">

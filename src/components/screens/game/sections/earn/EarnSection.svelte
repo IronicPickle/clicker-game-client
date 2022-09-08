@@ -1,7 +1,7 @@
 <script lang="ts">
   import Audio from "@components/common/generic/Audio.svelte";
   import Lamp from "@components/common/generic/Lamp.svelte";
-  import { getGlobalContext } from "@components/context/GlobalContext.svelte";
+  import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
   import { diminishNumber } from "@utils/generic";
@@ -34,15 +34,15 @@
   <RpmGear
     rpm={$rpm}
     isAccelerating={$isAccelerating}
-    onClick={() => {
+    on:click={() => {
       const rpmIncrease = 2; // acceleration
       const scaleFactor = 0.95; // diminshing returns
       const diminishedIncrease = diminishNumber($rpm, scaleFactor, rpmIncrease);
       const newRpm = $rpm + diminishedIncrease;
 
       $rpm = newRpm;
-      $isAccelerating = true;
     }}
+    clickable
     className="main"
     grindingSparksSide="right"
     GearIcon={$GearIcon}

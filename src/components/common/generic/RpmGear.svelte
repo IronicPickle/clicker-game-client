@@ -4,15 +4,17 @@
   import type { ClassName, Style } from "@ts/generic";
   import pSBC from "@utils/pSBC";
   import colors from "@constants/colors";
-  import type { SvelteComponent } from "svelte";
-  import { Howl, Howler } from "howler";
+  import { createEventDispatcher, SvelteComponent } from "svelte";
+  import { Howl } from "howler";
+
+  const dispatch = createEventDispatcher<{ click: MouseEvent }>();
 
   export let rpm = 0;
   export let ratio = 1;
   export let rotationDirection: "clockwise" | "counter-clockwise" = "clockwise";
-  export let onClick: () => void = undefined;
   export let isAccelerating = false;
   export let grindingSparksSide: "top" | "right" | "bottom" | "left" = undefined;
+  export let clickable = false;
 
   export let GearIcon: typeof SvelteComponent;
 
@@ -54,7 +56,7 @@
   });
 
   const handleClick = (event: MouseEvent) => {
-    onClick();
+    dispatch("click", event);
 
     metalTap.play();
 
@@ -83,8 +85,8 @@
   })}
 >
   <button
-    class={classNames("click-wrapper", onClick && "clickable")}
-    on:click={onClick ? handleClick : undefined}
+    class={classNames("click-wrapper", clickable && "clickable")}
+    on:click={clickable ? handleClick : undefined}
   >
     <div
       class="spin-wrapper"

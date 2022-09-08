@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getGlobalContext } from "@components/context/GlobalContext.svelte";
+  import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
   import { round } from "@utils/generic";
 

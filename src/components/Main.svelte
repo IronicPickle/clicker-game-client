@@ -1,5 +1,5 @@
 <script>
-  import GlobalContext from "./context/GlobalContext.svelte";
+  import GlobalContext from "./context/global/GlobalContext.svelte";
   import Screens from "./screens/Screens.svelte";
 </script>
 

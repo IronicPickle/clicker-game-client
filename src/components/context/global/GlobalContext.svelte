@@ -38,36 +38,23 @@
   import { getContext, setContext, SvelteComponent } from "svelte";
   import { Tweened, tweened } from "svelte/motion";
   import _GearIcon from "@components/common/media/gears/GearIcon1.svelte";
+  import useRpmReduction from "./hooks/useRpmReduction";
+  import useIsAccelerating from "./hooks/useIsAccelerating";
+  import useMoneyEarned from "./hooks/useMoneyEarned";
 
-  const rpmReductionInterval = 1000;
+  const rpmReductionDelay = 1000;
   const rpmReductionRate = 0.5;
 
   $: $isRunning = $rpm > 0;
   $: $GearIcon = _GearIcon;
-  $: tweenedRpm.set($rpm, { duration: rpmReductionInterval });
+  $: tweenedRpm.set($rpm, { duration: rpmReductionDelay });
 
-  let interval;
-  $: {
-    clearInterval(interval);
-    interval = setInterval(() => {
-      rpm.update(rpm => {
-        let newRpm = rpm - rpmReductionRate;
-        if (newRpm < 0) newRpm = 0;
-        return newRpm;
-      });
-    }, rpmReductionInterval);
-  }
+  useRpmReduction(rpm, rpmReductionRate, rpmReductionDelay);
+  useMoneyEarned(rpm);
 
-  let timeout;
-  $: {
-    $rpm;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      $isAccelerating = false;
-    }, rpmReductionInterval);
-  }
+  const { isAccelerating } = useIsAccelerating(rpm);
 
-  setContext("global", defaultGlobalContext);
+  setContext("global", { ...defaultGlobalContext, isAccelerating });
 </script>
 
 <slot />

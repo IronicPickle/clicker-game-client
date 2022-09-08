@@ -3,7 +3,7 @@
   import CircleButton from "@components/common/generic/CircleButton.svelte";
   import RpmGear from "@components/common/generic/RpmGear.svelte";
 
-  import { getGlobalContext } from "@components/context/GlobalContext.svelte";
+  import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
 

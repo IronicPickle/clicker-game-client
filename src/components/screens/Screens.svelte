@@ -1,5 +1,5 @@
 <script>
-  import { getGlobalContext } from "@components/context/GlobalContext.svelte";
+  import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
   import StartScreen from "@components/screens/start/StartScreen.svelte";
   import GameScreen from "@components/screens/game/GameScreen.svelte";
