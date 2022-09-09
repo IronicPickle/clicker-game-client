@@ -9,6 +9,10 @@
     isRunning: Writable<boolean>;
 
     GearIcon: Writable<typeof SvelteComponent>;
+
+    money: Writable<number>;
+    tweenedMoney: Tweened<number>;
+    moneyEarned: Writable<{ amount: number }>;
   }
 
   const screen = writable<Screen>("start");
@@ -19,6 +23,10 @@
 
   const GearIcon = writable<typeof SvelteComponent>(null);
 
+  const money = writable(0);
+  const tweenedMoney = tweened(0);
+  const moneyEarned = writable({ amount: 0 });
+
   export const defaultGlobalContext: GlobalContext = {
     screen,
     rpm,
@@ -27,6 +35,10 @@
     isRunning,
 
     GearIcon,
+
+    money,
+    tweenedMoney,
+    moneyEarned,
   };
 
   export const getGlobalContext = () => getContext<GlobalContext>("global") ?? defaultGlobalContext;
@@ -40,7 +52,7 @@
   import _GearIcon from "@components/common/media/gears/GearIcon1.svelte";
   import useRpmReduction from "./hooks/useRpmReduction";
   import useIsAccelerating from "./hooks/useIsAccelerating";
-  import useMoneyEarned from "./hooks/useMoneyEarned";
+  import useMoneyEarned, { moneyEarnedInterval } from "./hooks/useMoneyEarned";
 
   const rpmReductionDelay = 1000;
   const rpmReductionRate = 0.5;
@@ -48,9 +60,10 @@
   $: $isRunning = $rpm > 0;
   $: $GearIcon = _GearIcon;
   $: tweenedRpm.set($rpm, { duration: rpmReductionDelay });
+  $: tweenedMoney.set($money, { duration: moneyEarnedInterval });
 
   useRpmReduction(rpm, rpmReductionRate, rpmReductionDelay);
-  useMoneyEarned(rpm);
+  useMoneyEarned(rpm, money, moneyEarned);
 
   const { isAccelerating } = useIsAccelerating(rpm);
 

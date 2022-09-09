@@ -2,11 +2,11 @@
   import type { ClassName, Style } from "@ts/generic";
   import { styles } from "@utils/generic";
 
-  let width: string | number = 32;
-  let height: string | number = 32;
-  let viewBox: string = "0 0 580 580";
-  let style: Style;
-  let className: ClassName;
+  export let width: string | number = 32;
+  export let height: string | number = 32;
+  export let viewBox: string = "0 0 580 580";
+  export let style: Style = undefined;
+  export let className: ClassName = undefined;
 </script>
 
 <svg

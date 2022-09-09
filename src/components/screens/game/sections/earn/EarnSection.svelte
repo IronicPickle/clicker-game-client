@@ -4,7 +4,6 @@
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
-  import { diminishNumber } from "@utils/generic";
   import RpmGear from "../../../../common/generic/RpmGear.svelte";
 
   import GiLightBulb from "svelte-icons/gi/GiLightBulb.svelte";
@@ -13,6 +12,8 @@
   import CircleButton from "@components/common/generic/CircleButton.svelte";
   import GoStop from "svelte-icons/go/GoStop.svelte";
   import RpmCounter from "./RpmCounter.svelte";
+  import { diminishNumber } from "@utils/algorithms";
+  import CoinRain from "./CoinRain.svelte";
 
   const { rpm, isAccelerating, isRunning, GearIcon } = getGlobalContext();
 </script>
@@ -30,6 +31,7 @@
 
   <h2 class="title">Click the Gear</h2>
   <RpmCounter />
+  <CoinRain />
 
   <RpmGear
     rpm={$rpm}
@@ -69,7 +71,7 @@
     </Lamp>
   </div>
 
-  <Audio src="/audio/gears_running.mp3" html5 playing={$isRunning} loop volume={0.5} />
+  <Audio src="/audio/gears_running.wav" preload playing={$isRunning} loop volume={0.5} />
   <Audio src="/audio/gears_stopping.mp3" html5 playing={!$isRunning} volume={0.5} />
 </Section>
 
@@ -83,6 +85,7 @@
     grid-area: earn;
 
     min-height: 300px;
+    min-width: 500px;
 
     overflow: hidden;
     touch-action: manipulation;

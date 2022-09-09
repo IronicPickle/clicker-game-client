@@ -15,5 +15,9 @@ export default {
   red: "rgb(255, 0, 0)",
   uproarRed: "rgb(234, 13, 1)",
 
+  philippineBronze: "rgb(106, 56, 5)",
+  lightSilver: "rgb(215, 215, 215)",
+  lightGold: "rgb(175, 149, 0)",
+
   transparent: "transparent",
 };

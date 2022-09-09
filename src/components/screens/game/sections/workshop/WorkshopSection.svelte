@@ -6,6 +6,7 @@
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
   import Section from "@components/screens/game/sections/Section.svelte";
+  import MoneyCounter from "./MoneyCounter.svelte";
 
   const { rpm, isAccelerating, GearIcon } = getGlobalContext();
 
@@ -31,11 +32,15 @@
     rotationDirection="counter-clockwise"
     GearIcon={$GearIcon}
   />
+
+  <MoneyCounter />
 </Section>
 
 <style lang="scss">
   :global(.workshop) {
     position: relative;
+    display: flex;
+    flex-direction: column;
 
     grid-area: workshop;
 

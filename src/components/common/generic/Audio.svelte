@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Howl } from "howler";
+  import { Howl, SoundSpriteDefinitions } from "howler";
   import { onDestroy } from "svelte";
 
   export let src: string;
@@ -30,20 +30,6 @@
   $: audio.loop(loop);
   $: audio.mute(mute);
   $: audio.rate(rate);
-
-  let interval;
-  const buffer = 0.2 * rate;
-  $: {
-    clearInterval(interval);
-
-    if (playing && !stopped && loop) {
-      interval = setInterval(() => {
-        if (audio.seek() > audio.duration() - buffer) {
-          audio.seek(0);
-        }
-      }, (buffer / 2) * 1000);
-    }
-  }
 
   onDestroy(() => {
     audio.stop();
