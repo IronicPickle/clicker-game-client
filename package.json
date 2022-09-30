@@ -19,6 +19,7 @@
     "vite": "^3.0.7"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "dayjs": "^1.11.5",
     "howler": "^2.2.3",
     "svelte-icons": "^2.1.0"

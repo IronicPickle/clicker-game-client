@@ -1,8 +1,39 @@
 <script lang="ts">
+  import useCreateSession from "@api/put/hooks/useCreateSession";
   import Button from "@components/common/generic/Button.svelte";
+  import DataCheck from "@components/common/generic/DataCheck.svelte";
+  import Input from "@components/form/Input.svelte";
+  import useForm from "@hooks/useForm";
   import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
   import { backIn } from "svelte/easing";
   import { fly } from "svelte/transition";
+  import sessionValidators from "@shared/validators/sessionValidators";
+  import useMergedErrs from "@hooks/useMergedErrs";
+  import useStorageItem from "@hooks/useStorageItem";
+  import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
+
+  const { session, sessionIsLoading, sessionErrs } = getGlobalContext();
+
+  const sessionItem = useStorageItem<string>("sessionId");
+  const { send: create, errs: apiErrs } = useCreateSession();
+
+  const {
+    values,
+    errs: formErrs,
+    onChange,
+  } = useForm(
+    {
+      displayName: "Testing",
+    },
+    sessionValidators.create,
+  );
+
+  const createSession = async () => {
+    const { data } = await create($values);
+    if (data) sessionItem.set(data.id);
+  };
+
+  const mergedErrs = useMergedErrs(formErrs, apiErrs);
 </script>
 
 <div class="start-screen">
@@ -15,19 +46,32 @@
     }}
   >
     <div class="wrapper">
-      <h1 class="title">Clicker Punk</h1>
-      <Button
-        size="128px"
-        baseColor="wetlandsSwamp"
-        bgColor="redWineVinegar"
-        rimColor="lemonDrop"
-        on:click>Start Game</Button
-      >
+      <DataCheck isLoading={$sessionIsLoading} errs={[$mergedErrs, $sessionErrs]}>
+        <h1 class="title">Clicker Punk</h1>
 
-      <div class="cogs">
-        <div class="cog-wrapper"><IoIosCog /></div>
-        <div class="cog-wrapper"><IoIosCog /></div>
-      </div>
+        {#if $session}
+          <Button
+            size="128px"
+            baseColor="wetlandsSwamp"
+            bgColor="redWineVinegar"
+            rimColor="lemonDrop"
+            on:click>Start Game</Button
+          >
+        {:else}
+          <Input
+            name={"displayName"}
+            value={$values.displayName}
+            on:change={({ detail }) => onChange(detail)}
+          />
+
+          <Button on:click={createSession}>Submit</Button>
+        {/if}
+
+        <div class="cogs">
+          <div class="cog-wrapper"><IoIosCog /></div>
+          <div class="cog-wrapper"><IoIosCog /></div>
+        </div>
+      </DataCheck>
     </div>
   </div>
 </div>

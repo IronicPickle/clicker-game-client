@@ -1,4 +1,3 @@
-import { generateUuid } from "@utils/generic";
 import { writable } from "svelte/store";
 
 export default <T>(removalTimeout: number, reuseIndexes?: boolean) => {
@@ -7,7 +6,7 @@ export default <T>(removalTimeout: number, reuseIndexes?: boolean) => {
   const queue = writable<Array<V>>([]);
 
   const addToQueue = (item: T) => {
-    let key = generateUuid();
+    let key = crypto.randomUUID();
 
     const newItem: V = { ...item, key, available: false };
 

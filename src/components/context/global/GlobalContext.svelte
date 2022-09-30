@@ -13,6 +13,10 @@
     money: Writable<number>;
     tweenedMoney: Tweened<number>;
     moneyEarned: Writable<{ amount: number }>;
+
+    session?: Readable<GetSessionRes | undefined>;
+    sessionIsLoading?: Readable<boolean>;
+    sessionErrs?: Readable<ApiErrors<GetSessionReq>>;
   }
 
   const screen = writable<Screen>("start");
@@ -21,7 +25,7 @@
   const isAccelerating = writable(false);
   const isRunning = writable(false);
 
-  const GearIcon = writable<typeof SvelteComponent>(null);
+  const GearIcon = writable<typeof SvelteComponent>();
 
   const money = writable(0);
   const tweenedMoney = tweened(0);
@@ -45,7 +49,7 @@
 </script>
 
 <script lang="ts">
-  import { Writable, writable } from "svelte/store";
+  import { readable, Readable, Writable, writable } from "svelte/store";
 
   import { getContext, setContext, SvelteComponent } from "svelte";
   import { Tweened, tweened } from "svelte/motion";
@@ -53,6 +57,9 @@
   import useRpmReduction from "./hooks/useRpmReduction";
   import useIsAccelerating from "./hooks/useIsAccelerating";
   import useMoneyEarned, { moneyEarnedInterval } from "./hooks/useMoneyEarned";
+  import type { GetSessionReq, GetSessionRes } from "@shared/ts/api/session";
+  import useSession from "./hooks/useSession";
+  import type { ApiErrors } from "@api/api";
 
   const rpmReductionDelay = 1000;
   const rpmReductionRate = 0.5;
@@ -67,7 +74,15 @@
 
   const { isAccelerating } = useIsAccelerating(rpm);
 
-  setContext("global", { ...defaultGlobalContext, isAccelerating });
+  const { isLoading, errs, data } = useSession();
+
+  setContext("global", {
+    ...defaultGlobalContext,
+    isAccelerating,
+    session: data,
+    sessionIsLoading: isLoading,
+    sessionErrs: errs,
+  });
 </script>
 
 <slot />

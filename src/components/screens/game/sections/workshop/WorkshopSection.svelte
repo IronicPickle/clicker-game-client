@@ -8,13 +8,16 @@
   import Section from "@components/screens/game/sections/Section.svelte";
   import MoneyCounter from "./MoneyCounter.svelte";
 
-  const { rpm, isAccelerating, GearIcon } = getGlobalContext();
+  const { rpm, isAccelerating, GearIcon, session } = getGlobalContext();
+
+  $: console.log($session);
 
   let on = false;
 </script>
 
 <Section className="workshop">
   <h1 class="title">Workshop</h1>
+  <h2 class="display-name">{$session?.displayName}</h2>
 
   <div class="test">
     <div class="row">
@@ -53,6 +56,15 @@
       text-align: center;
 
       margin-top: 32px;
+    }
+
+    .display-name {
+      @include stardosStencil();
+      color: $white;
+      font-size: 32px;
+      text-align: center;
+
+      margin-top: 8px;
     }
 
     .test {

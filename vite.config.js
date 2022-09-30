@@ -31,6 +31,8 @@ export default defineConfig({
       "@styles": path.resolve(__dirname, "./styles"),
 
       "@src": path.resolve(__dirname, "./src"),
+
+      "@shared": path.resolve(__dirname, "../clicker-game-shared"),
     },
   },
 });

@@ -2,8 +2,8 @@
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
   import colors from "@constants/colors";
   import useDynamicArray from "@hooks/useDynamicArray";
-  import { moneyToMaxCoin, randomNum, round, styles } from "@utils/generic";
-  import { raf } from "svelte/internal";
+  import { moneyToMaxCoin, styles } from "@utils/generic";
+  import { round } from "@shared/utils/generic";
 
   const moneyEarnedDuration = 1000;
 

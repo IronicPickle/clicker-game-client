@@ -14,8 +14,8 @@
   export let borderColor: Color = "blackout";
   export let cageColor: Color = "blackout";
 
-  export let className: ClassName = undefined;
-  export let style: Style = undefined;
+  export let className: ClassName | undefined = undefined;
+  export let style: Style | undefined = undefined;
 </script>
 
 <div

@@ -1,6 +1,5 @@
 <script lang="ts">
   import colors from "@constants/colors";
-  import App from "@src/App.svelte";
   import type { ClassName, Color, Style } from "@ts/generic";
 
   import { classNames, styles } from "@utils/generic";
@@ -20,8 +19,8 @@
   export let type: "button" | "menu" | "reset" | "submit" = "button";
   export let disabled: boolean = false;
 
-  export let className: ClassName = undefined;
-  export let style: Style = undefined;
+  export let className: ClassName | undefined = undefined;
+  export let style: Style | undefined = undefined;
 </script>
 
 <button

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import colors from "@constants/colors";
+  import { randomNum } from "@shared/utils/generic";
   import type { Color } from "@ts/generic";
 
-  import { randomNum, styles } from "@utils/generic";
+  import { styles } from "@utils/generic";
 
   export let sparkWidth = 1;
   export let sparkHeight = 10;

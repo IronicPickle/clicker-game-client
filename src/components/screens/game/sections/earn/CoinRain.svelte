@@ -1,12 +1,12 @@
 <script lang="ts">
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
   import { coins } from "@constants/generic";
-  import { generateUuid, moneyToCoins, randomNum } from "@utils/generic";
-  import { writable } from "svelte/store";
+  import { moneyToCoins } from "@utils/generic";
   import { onMount } from "svelte";
   import type { CoinDataExtended } from "./Coin.svelte";
   import Coin from "./Coin.svelte";
   import useDynamicArray from "@hooks/useDynamicArray";
+  import { randomNum } from "@shared/utils/generic";
 
   const { moneyEarned } = getGlobalContext();
 
@@ -30,7 +30,7 @@
         if (coinCount > 0) {
           newCoins.push({
             ...coins[type],
-            key: generateUuid(),
+            key: crypto.randomUUID(),
             duration: randomNum(maxDuration / 2, maxDuration),
             delay: randomNum(maxDelay / 2, maxDelay),
             offset: randomNum(-200, 200),

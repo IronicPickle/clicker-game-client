@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { classNames, minMax, randomNum, round, styles } from "@utils/generic";
+  import { classNames, styles } from "@utils/generic";
   import Sparks from "@components/common/effects/Sparks.svelte";
   import type { ClassName, Style } from "@ts/generic";
   import pSBC from "@utils/pSBC";
   import colors from "@constants/colors";
   import { createEventDispatcher, SvelteComponent } from "svelte";
   import { Howl } from "howler";
+  import { round, minMax, randomNum } from "@shared/utils/generic";
 
   const dispatch = createEventDispatcher<{ click: MouseEvent }>();
 

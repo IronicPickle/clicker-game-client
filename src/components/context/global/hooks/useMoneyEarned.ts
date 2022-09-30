@@ -1,6 +1,6 @@
 import { calcMoneyEarnedPertick } from "@utils/algorithms";
-import { round } from "@utils/generic";
 import type { Writable } from "svelte/store";
+import { round } from "@shared/utils/generic";
 
 export const moneyEarnedInterval = 250;
 

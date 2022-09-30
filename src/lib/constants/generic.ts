@@ -1,6 +1,5 @@
 import { Coin, CoinData } from "@ts/generic";
 import CoinIcon from "@components/common/media/icons/CoinIcon.svelte";
-import colors from "./colors";
 
 export const coins: Record<Coin, CoinData> = {
   [Coin.Bronze]: {

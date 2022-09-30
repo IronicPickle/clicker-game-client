@@ -16,7 +16,9 @@
       "@media/*": ["./media/*"],
       "@styles/*": ["./styles/*"],
 
-      "@src/*": ["./*"]
+      "@src/*": ["./*"],
+
+      "@shared/*": ["../../clicker-game-shared/*"]
     }
   }
 }

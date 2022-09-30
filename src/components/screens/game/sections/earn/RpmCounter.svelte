@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
 
-  import { round } from "@utils/generic";
+  import { round } from "@shared/utils/generic";
 
   const { tweenedRpm } = getGlobalContext();
 </script>

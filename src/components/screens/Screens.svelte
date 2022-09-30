@@ -6,9 +6,7 @@
 
   import { classNames } from "@utils/generic";
 
-  const test = getGlobalContext();
-
-  const screen = test.screen;
+  const { screen } = getGlobalContext();
 </script>
 
 <div class={classNames("screens", `${$screen}-screen`)}>

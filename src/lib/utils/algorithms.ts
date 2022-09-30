@@ -1,4 +1,4 @@
-import { randomNum, round } from "./generic";
+import { randomNum, round } from "@shared/utils/generic";
 
 export const diminishNumber = (x: number, scaleFactor: number, startValue: number) =>
   Math.pow(scaleFactor, x) * startValue;
