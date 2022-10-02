@@ -5,15 +5,15 @@
 
   import { styles } from "@utils/generic";
 
-  export let sparkWidth = 1;
-  export let sparkHeight = 10;
+  export let sparkWidth = "1px";
+  export let sparkHeight = "10px";
   export let sparkColor: Color = "brimstone";
   export let sparks = 10;
   export let duration = 500;
 
   let key = Math.random();
 
-  let interval;
+  let interval: any;
   $: {
     clearInterval(interval);
     interval = setInterval(() => {
@@ -25,8 +25,8 @@
 <div
   class="sparks"
   style={styles({
-    "--spark-width": `${sparkWidth}px`,
-    "--spark-height": `${sparkHeight}px`,
+    "--spark-width": sparkWidth,
+    "--spark-height": sparkHeight,
     "--spark-color": `${colors[sparkColor]}`,
   })}
 >

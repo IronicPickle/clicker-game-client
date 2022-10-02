@@ -11,27 +11,30 @@
   import useMergedErrs from "@hooks/useMergedErrs";
   import useStorageItem from "@hooks/useStorageItem";
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
+  import Form from "@components/common/form/Form.svelte";
+  import FormRow from "@components/common/form/FormRow.svelte";
+  import FormEntry from "@components/common/form/FormEntry.svelte";
 
   const { session, sessionIsLoading, sessionErrs } = getGlobalContext();
 
   const sessionItem = useStorageItem<string>("sessionId");
-  const { send: create, errs: apiErrs } = useCreateSession();
+  const { send: create, errs: apiErrs, isLoading: createIsLoading } = useCreateSession();
 
   const {
     values,
     errs: formErrs,
     onChange,
+    onSubmit,
   } = useForm(
     {
-      displayName: "Testing",
+      displayName: "",
+    },
+    async values => {
+      const { data } = await create(values);
+      if (data) sessionItem.set(data.id);
     },
     sessionValidators.create,
   );
-
-  const createSession = async () => {
-    const { data } = await create($values);
-    if (data) sessionItem.set(data.id);
-  };
 
   const mergedErrs = useMergedErrs(formErrs, apiErrs);
 </script>
@@ -46,32 +49,47 @@
     }}
   >
     <div class="wrapper">
-      <DataCheck isLoading={$sessionIsLoading} errs={[$mergedErrs, $sessionErrs]}>
-        <h1 class="title">Clicker Punk</h1>
+      <h1 class="title">Clicker Punk</h1>
 
-        {#if $session}
-          <Button
-            size="128px"
-            baseColor="wetlandsSwamp"
-            bgColor="redWineVinegar"
-            rimColor="lemonDrop"
-            on:click>Start Game</Button
-          >
-        {:else}
-          <Input
-            name={"displayName"}
-            value={$values.displayName}
-            on:change={({ detail }) => onChange(detail)}
-          />
+      {#if $session}
+        <Button
+          size="128px"
+          baseColor="wetlandsSwamp"
+          bgColor="redWineVinegar"
+          rimColor="lemonDrop"
+          on:click>Start Game</Button
+        >
+      {:else}
+        <Form on:submit={onSubmit}>
+          <DataCheck isLoading={$createIsLoading} errs={[$mergedErrs]} hideOnly let:style>
+            <FormRow {style}>
+              <FormEntry name="displayName" errs={$mergedErrs.displayName}>
+                <Input
+                  name="displayName"
+                  placeholder="Display Name"
+                  value={$values.displayName}
+                  on:change={({ detail }) => onChange(detail)}
+                  errs={$mergedErrs.displayName}
+                />
+              </FormEntry>
 
-          <Button on:click={createSession}>Submit</Button>
-        {/if}
+              <Button
+                size="64px"
+                baseColor="wetlandsSwamp"
+                bgColor="redWineVinegar"
+                rimColor="lemonDrop"
+                type="submit"
+                disabled={$createIsLoading}>Submit</Button
+              >
+            </FormRow>
+          </DataCheck>
+        </Form>
+      {/if}
 
-        <div class="cogs">
-          <div class="cog-wrapper"><IoIosCog /></div>
-          <div class="cog-wrapper"><IoIosCog /></div>
-        </div>
-      </DataCheck>
+      <div class="cogs">
+        <div class="cog-wrapper"><IoIosCog /></div>
+        <div class="cog-wrapper"><IoIosCog /></div>
+      </div>
     </div>
   </div>
 </div>
@@ -123,10 +141,15 @@
           z-index: 100;
         }
 
-        :global(.button-wrapper) {
-          font-size: 64px;
+        :global(.form) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
 
-          z-index: 100;
+          :global(.button) {
+            width: 150px;
+          }
         }
 
         .cog-wrapper {

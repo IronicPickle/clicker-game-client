@@ -1,7 +1,7 @@
 <script lang="ts">
   import { classNames, styles } from "@utils/generic";
   import Sparks from "@components/common/effects/Sparks.svelte";
-  import type { ClassName, Style } from "@ts/generic";
+  import type { ClassName, Id, Style } from "@ts/generic";
   import pSBC from "@utils/pSBC";
   import colors from "@constants/colors";
   import { createEventDispatcher, SvelteComponent } from "svelte";
@@ -14,18 +14,19 @@
   export let ratio = 1;
   export let rotationDirection: "clockwise" | "counter-clockwise" = "clockwise";
   export let isAccelerating = false;
-  export let grindingSparksSide: "top" | "right" | "bottom" | "left" = undefined;
+  export let grindingSparksSide: "top" | "right" | "bottom" | "left" | undefined = undefined;
   export let clickable = false;
 
   export let GearIcon: typeof SvelteComponent;
 
-  export let style: Style = undefined;
-  export let className: ClassName = undefined;
+  export let style: Style | undefined = undefined;
+  export let id: Id | undefined = undefined;
+  export let className: ClassName | undefined = undefined;
 
   const oneMinute = 1000 * 60;
   const sparksDuration = 300;
 
-  let interval;
+  let interval: any;
   let i = 0;
   let rotation = i;
   let duration = 0;
@@ -79,6 +80,7 @@
 
 <div
   class={classNames("gear-wrapper", className)}
+  {id}
   bind:this={gearWrapper}
   style={styles({
     "--gear-color": pSBC(minMax(effectiveRpm, 0, 100) / 100, colors.brimstone, colors.uproarRed),
@@ -95,15 +97,15 @@
         "--rotation": `${rotationDirection === "clockwise" ? "" : "-"}${rotation}deg`,
       })}
     >
-      <GearIcon />
+      <svelte:component this={GearIcon} />
     </div>
 
     {#if !isAccelerating && effectiveRpm > 1 && grindingSparksSide}
       <div class={classNames("grinding-sparks-wrapper", grindingSparksSide)}>
         <Sparks
           sparkColor="lemonDrop"
-          sparkWidth={1}
-          sparkHeight={minMax(effectiveRpm / 2, 10, 30) * ratio}
+          sparkWidth="1px"
+          sparkHeight={`${minMax(effectiveRpm / 2, 10, 30) * ratio}px`}
           sparks={30}
           duration={minMax(effectiveRpm / 2, 20, 50) * 10 * ratio}
         />
@@ -121,8 +123,8 @@
     >
       <Sparks
         sparkColor="brimstone"
-        sparkWidth={1}
-        sparkHeight={30 * ratio}
+        sparkWidth="1px"
+        sparkHeight={`${30 * ratio}px`}
         sparks={randomNum(5, 10)}
         duration={sparksDuration}
       />

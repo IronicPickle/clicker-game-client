@@ -1,19 +1,20 @@
 <script lang="ts">
-  import type { ClassName, Style } from "@ts/generic";
-  import { styles } from "@utils/generic";
-
   export let width: string | number = 32;
   export let height: string | number = 32;
   export let viewBox: string = "0 0 580 580";
-  export let style: Style = undefined;
-  export let className: ClassName = undefined;
+
+  let className: string = "";
+  export { className as class };
+  export let id: string = "";
+  export let style: string = "";
 </script>
 
 <svg
   {width}
   {height}
   {viewBox}
-  style={styles(style)}
+  {style}
+  {id}
   class={className}
   fill="currentColor"
   stroke="currentColor"

@@ -1,6 +1,6 @@
 <script lang="ts">
   import colors from "@constants/colors";
-  import type { ClassName, Color, Style } from "@ts/generic";
+  import type { Color } from "@ts/generic";
 
   import { classNames, styles } from "@utils/generic";
   import pSBC from "@utils/pSBC";
@@ -19,12 +19,15 @@
   export let type: "button" | "menu" | "reset" | "submit" = "button";
   export let disabled: boolean = false;
 
-  export let className: ClassName | undefined = undefined;
-  export let style: Style | undefined = undefined;
+  let className: string = "";
+  export { className as class };
+  export let id: string = "";
+  export let style: string = "";
 </script>
 
 <button
   class={classNames("button", className, on && "on", lampColor && "is-lamp")}
+  {id}
   style={styles({
     "--text-color": colors[textColor],
 
@@ -47,8 +50,7 @@
     "--rim-color": colors[rimColor],
 
     "--size": size,
-    ...style,
-  })}
+  }) + style}
   {type}
   {disabled}
   on:click

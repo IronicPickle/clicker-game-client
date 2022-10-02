@@ -4,8 +4,9 @@ import type Validator from "@shared/utils/Validator";
 import type { ApiErrors } from "@api/api";
 import { isBoolean } from "@shared/utils/generic";
 
-export default <IS>(
+export default <IS extends object>(
   initialValues: IS,
+  handle: (values: IS) => void,
   getValidators?: (values: IS) => {
     [N in keyof IS]?: Validator;
   },
@@ -41,5 +42,16 @@ export default <IS>(
     updateErrs(name, validator.getErrors());
   };
 
-  return { values, errs, onChange, validate };
+  const validateAll = () => {
+    for (const name of Object.keys(get(values)) as Array<keyof IS>) validate(name);
+  };
+
+  const onSubmit = () => {
+    validateAll();
+    const failed = get(errs).failed;
+    if (!failed) handle(get(values));
+    return !failed;
+  };
+
+  return { values, errs, onChange, onSubmit };
 };

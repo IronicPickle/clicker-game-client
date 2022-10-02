@@ -20,7 +20,6 @@ const useStorageItem = <D>(key: string, initial?: D) => {
   };
 
   const handleStorageChange = () => {
-    console.log("change");
     item.set(storageItem.get());
   };
 

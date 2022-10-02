@@ -15,6 +15,12 @@ export default {
   red: "rgb(255, 0, 0)",
   uproarRed: "rgb(234, 13, 1)",
 
+  acidCandy: "rgb(168, 198, 78)",
+  scrub: "rgb(60, 65, 44)",
+  ultimateGray: "rgb(169, 169, 169)",
+  forgedSteel: "rgb(90, 90, 90)",
+  pianoBlack: "rgb(24, 25, 26)",
+
   philippineBronze: "rgb(106, 56, 5)",
   lightSilver: "rgb(215, 215, 215)",
   lightGold: "rgb(175, 149, 0)",

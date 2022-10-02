@@ -1,5 +1,6 @@
 @import "./stardosStencil.scss";
 @import "./rye.scss";
+@import "./sevenSegment.scss";
 
 @mixin stardosStencil($weight: 400, $style: normal) {
   font-weight: $weight;
@@ -11,4 +12,10 @@
   font-weight: $weight;
   font-style: $style;
   font-family: "Rye";
+}
+
+@mixin sevenSegment($weight: 400, $style: normal) {
+  font-weight: $weight;
+  font-style: $style;
+  font-family: "Seven Segment";
 }

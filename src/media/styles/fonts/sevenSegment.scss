@@ -1,0 +1,10 @@
+@mixin sevenSegmentFontFace($name, $weight, $style) {
+  font-family: "Seven Segment";
+  src: url("../../media/fonts/sevenSegment/#{$name}");
+  font-weight: $weight;
+  font-style: $style;
+}
+
+@font-face {
+  @include sevenSegmentFontFace("Seven Segment.ttf", 400, normal);
+}

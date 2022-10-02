@@ -1,7 +1,7 @@
 <script lang="ts">
   import colors from "@constants/colors";
 
-  import type { ClassName, Color, Style } from "@ts/generic";
+  import type { Color } from "@ts/generic";
   import { classNames, styles } from "@utils/generic";
   import pSBC from "@utils/pSBC";
 
@@ -14,12 +14,15 @@
   export let borderColor: Color = "blackout";
   export let cageColor: Color = "blackout";
 
-  export let className: ClassName | undefined = undefined;
-  export let style: Style | undefined = undefined;
+  let className: string = "";
+  export { className as class };
+  export let id: string = "";
+  export let style: string = "";
 </script>
 
 <div
   class={classNames("lamp", className, on ? "on" : "off")}
+  {id}
   style={styles({
     "--icon-color": colors[iconColor],
     "--base-color": colors[baseColor],
@@ -28,8 +31,7 @@
     "--border-color": colors[borderColor],
     "--cage-color": colors[cageColor],
     "--size": size,
-    ...style,
-  })}
+  }) + style}
 >
   <div class="base-outer">
     <div class="base-inner">

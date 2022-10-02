@@ -1,7 +1,7 @@
 <script lang="ts">
   import colors from "@constants/colors";
 
-  import type { ClassName, Color, Style } from "@ts/generic";
+  import type { Color } from "@ts/generic";
   import { classNames, styles } from "@utils/generic";
   import pSBC from "@utils/pSBC";
 
@@ -18,12 +18,15 @@
   export let type: "button" | "menu" | "reset" | "submit" = "button";
   export let disabled: boolean = false;
 
-  export let className: ClassName = undefined;
-  export let style: Style = undefined;
+  let className: string = "";
+  export { className as class };
+  export let id: string = "";
+  export let style: string = "";
 </script>
 
 <button
   class={classNames("circle-button", className, on && "on", lampColor && "is-lamp")}
+  {id}
   style={styles({
     "--icon-color": colors[iconColor],
     "--hover-icon-color": pSBC(-0.3, colors[iconColor]),
@@ -47,8 +50,7 @@
     "--rim-color": colors[rimColor],
 
     "--size": size,
-    ...style,
-  })}
+  }) + size}
   {type}
   {disabled}
   on:click
