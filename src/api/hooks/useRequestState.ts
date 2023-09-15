@@ -1,21 +1,21 @@
-import type { ApiErrors } from "@api/api";
+import type { ApiError } from "@shared/ts/api/generic";
 import { writable } from "svelte/store";
 
 export type CurrentReqState<D, R> = {
   isLoading: boolean;
   data?: R;
-  errs: ApiErrors<D>;
+  error?: ApiError<keyof D>;
 };
 
 const useRequestState = <D, R>(defaultData?: R) => {
   const createReqState = (
     isLoading: boolean,
     data?: R,
-    errs: ApiErrors<D> = { failed: false } as ApiErrors<D>,
+    error?: ApiError<keyof D>,
   ): CurrentReqState<D, R> => ({
     isLoading,
     data,
-    errs,
+    error,
   });
 
   const reqState = writable<CurrentReqState<D, R>>(createReqState(false, defaultData));
@@ -35,13 +35,13 @@ const useRequestState = <D, R>(defaultData?: R) => {
     reqState.set(newReqState);
     return newReqState;
   };
-  const setErrs = (errs: ApiErrors<D>) => {
-    const newReqState = createReqState(false, defaultData, errs);
+  const setError = (error: ApiError<keyof D>) => {
+    const newReqState = createReqState(false, defaultData, error);
     reqState.set(newReqState);
     return newReqState;
   };
 
-  return { reqState, setIdle, setLoading, setSuccess, setErrs };
+  return { reqState, setIdle, setLoading, setSuccess, setError };
 };
 
 export default useRequestState;

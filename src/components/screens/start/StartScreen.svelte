@@ -1,42 +1,45 @@
 <script lang="ts">
-  import useCreateSession from "@api/put/hooks/useCreateSession";
   import Button from "@components/common/generic/Button.svelte";
-  import DataCheck from "@components/common/generic/DataCheck.svelte";
-  import Input from "@components/form/Input.svelte";
-  import useForm from "@hooks/useForm";
   import IoIosCog from "svelte-icons/io/IoIosCog.svelte";
   import { backIn } from "svelte/easing";
   import { fly } from "svelte/transition";
-  import sessionValidators from "@shared/validators/sessionValidators";
-  import useMergedErrs from "@hooks/useMergedErrs";
-  import useStorageItem from "@hooks/useStorageItem";
   import { getGlobalContext } from "@components/context/global/GlobalContext.svelte";
-  import Form from "@components/common/form/Form.svelte";
-  import FormRow from "@components/common/form/FormRow.svelte";
-  import FormEntry from "@components/common/form/FormEntry.svelte";
-
-  const { session, sessionIsLoading, sessionErrs } = getGlobalContext();
-
-  const sessionItem = useStorageItem<string>("sessionId");
-  const { send: create, errs: apiErrs, isLoading: createIsLoading } = useCreateSession();
+  import CreateSessionForm from "./CreateSessionForm.svelte";
+  import DataCheck from "@components/common/generic/DataCheck.svelte";
+  import useDerivedError from "@hooks/useDerivedError";
+  import useDerivedIsLoading from "@hooks/useDerivedIsLoading";
+  import useIsLoadingMessage from "@hooks/useIsLoadingText";
+  import { classNames } from "@utils/generic";
 
   const {
-    values,
-    errs: formErrs,
-    onChange,
-    onSubmit,
-  } = useForm(
-    {
-      displayName: "",
-    },
-    async values => {
-      const { data } = await create(values);
-      if (data) sessionItem.set(data.id);
-    },
-    sessionValidators.create,
-  );
+    session,
+    sessionIsLoading,
+    sessionError,
+    createSessionIsLoading,
+    createSessionError,
+    gameDataIsLoading,
+    gameDataError,
+    createGameDataIsLoading,
+    createGameDataError,
+    gameData,
+  } = getGlobalContext();
 
-  const mergedErrs = useMergedErrs(formErrs, apiErrs);
+  const error = useDerivedError(
+    sessionError,
+    createGameDataError,
+    gameDataError,
+    createGameDataError,
+  );
+  const isLoading = useDerivedIsLoading(
+    sessionIsLoading,
+    createSessionIsLoading,
+    gameDataIsLoading,
+    createGameDataIsLoading,
+  );
+  const isLoadingText = useIsLoadingMessage(
+    [sessionIsLoading, createSessionIsLoading, gameDataIsLoading, createGameDataIsLoading],
+    ["Fetching session", "Creating session", "Fetching game data", "Creating game data"],
+  );
 </script>
 
 <div class="start-screen">
@@ -51,44 +54,36 @@
     <div class="wrapper">
       <h1 class="title">Clicker Punk</h1>
 
-      {#if $session}
-        <Button
-          size="128px"
-          baseColor="wetlandsSwamp"
-          bgColor="redWineVinegar"
-          rimColor="lemonDrop"
-          on:click>Start Game</Button
+      <div class="inner">
+        <DataCheck
+          isLoading={$isLoading}
+          loadingText={$isLoadingText}
+          error={$error}
+          hideOnly
+          let:style
         >
-      {:else}
-        <Form on:submit={onSubmit}>
-          <DataCheck isLoading={$createIsLoading} errs={[$mergedErrs]} hideOnly let:style>
-            <FormRow {style}>
-              <FormEntry name="displayName" errs={$mergedErrs.displayName}>
-                <Input
-                  name="displayName"
-                  placeholder="Display Name"
-                  value={$values.displayName}
-                  on:change={({ detail }) => onChange(detail)}
-                  errs={$mergedErrs.displayName}
-                />
-              </FormEntry>
-
-              <Button
-                size="64px"
-                baseColor="wetlandsSwamp"
-                bgColor="redWineVinegar"
-                rimColor="lemonDrop"
-                type="submit"
-                disabled={$createIsLoading}>Submit</Button
-              >
-            </FormRow>
-          </DataCheck>
-        </Form>
-      {/if}
+          {#if $session && $gameData}
+            <Button
+              size="128px"
+              baseColor="wetlandsSwamp"
+              bgColor="redWineVinegar"
+              rimColor="lemonDrop"
+              {style}
+              on:click>Start Game</Button
+            >
+          {:else}
+            <CreateSessionForm {style} />
+          {/if}
+        </DataCheck>
+      </div>
 
       <div class="cogs">
-        <div class="cog-wrapper"><IoIosCog /></div>
-        <div class="cog-wrapper"><IoIosCog /></div>
+        <div class={classNames("cog-wrapper", !$session && "disabled")}>
+          <IoIosCog />
+        </div>
+        <div class={classNames("cog-wrapper", !$gameData && "disabled")}>
+          <IoIosCog />
+        </div>
       </div>
     </div>
   </div>
@@ -116,7 +111,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 32px;
+        justify-content: space-between;
+
+        min-height: 452px;
 
         padding: 20px 40px 50px 40px;
 
@@ -131,6 +128,7 @@
         border-radius: 30px;
 
         overflow: hidden;
+        box-sizing: border-box;
 
         .title {
           color: $white;
@@ -141,14 +139,13 @@
           z-index: 100;
         }
 
-        :global(.form) {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 16px;
+        .inner {
+          position: relative;
 
-          :global(.button) {
-            width: 150px;
+          :global(.form) {
+            :global(.button) {
+              width: 150px;
+            }
           }
         }
 
@@ -159,6 +156,12 @@
           @include size(512px);
 
           color: $brimstone;
+
+          &.disabled {
+            :global(svg) {
+              animation-play-state: paused;
+            }
+          }
 
           &:first-of-type {
             left: 0;

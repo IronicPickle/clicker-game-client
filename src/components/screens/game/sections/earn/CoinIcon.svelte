@@ -25,7 +25,7 @@
   })}
   class="coin-wrapper"
 >
-  <Icon style={{ "--color": colors[color] }} className="coin-icon" />
+  <Icon style={styles({ "--color": colors[color] })} class="coin-icon" />
 </div>
 
 <style lang="scss">

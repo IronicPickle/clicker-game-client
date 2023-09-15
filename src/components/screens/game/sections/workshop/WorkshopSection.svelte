@@ -8,9 +8,9 @@
   import Section from "@components/screens/game/sections/Section.svelte";
   import MoneyCounter from "./MoneyCounter.svelte";
 
-  const { rpm, isAccelerating, GearIcon, session } = getGlobalContext();
+  const { rpm, isAccelerating, GearIcon, session, gameData } = getGlobalContext();
 
-  $: console.log($session);
+  $: console.log({ $session, $gameData });
 
   let on = false;
 </script>

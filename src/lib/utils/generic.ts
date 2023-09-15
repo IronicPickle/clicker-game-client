@@ -36,3 +36,6 @@ export const moneyToMaxCoin = (money: number): CoinData | null => {
 export const log = (...text: any[]) => {
   if (isDev) console.log("[Development]", ...text);
 };
+
+export const purgeUndefined = <V>(array: Array<V | undefined>) =>
+  array.filter(value => !!value) as V[];

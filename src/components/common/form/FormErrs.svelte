@@ -20,7 +20,6 @@
       @include stardosStencil(500);
       color: $uproarRed;
       font-size: 14px;
-      text-shadow: 2px 2px 5px $blackout;
     }
   }
 </style>

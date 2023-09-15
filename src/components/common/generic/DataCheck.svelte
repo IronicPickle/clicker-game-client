@@ -8,14 +8,13 @@
   };
 
   export let isLoading = false;
-  export let errs: any[] | undefined = undefined;
+  export let loadingText: string | undefined = undefined;
+  export let error: string | undefined = undefined;
   export let isEmpty = false;
 
   export let emptyMessage = "No data";
 
   export let hideOnly = false;
-
-  const genericErr = errs?.find(err => err && err.generic);
 </script>
 
 {#if isLoading}
@@ -24,13 +23,16 @@
   {/if}
   <div class="data-check">
     <Progress />
+    {#if loadingText}
+      <p class="loading-text">{loadingText}</p>
+    {/if}
   </div>
-{:else if genericErr}
+{:else if error}
   {#if hideOnly}
     <slot style={styles({ visibility: "hidden" })} />
   {/if}
   <div class="data-check">
-    <FormErrs errs={genericErr} />
+    <FormErrs errs={[error]} />
   </div>
 {:else if isEmpty}
   {#if hideOnly}
@@ -47,8 +49,17 @@
   .data-check {
     position: absolute;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+
     inset: 0;
+
+    .loading-text {
+      @include stardosStencil(500);
+      color: $lemonDrop;
+      font-size: 16px;
+    }
   }
 </style>

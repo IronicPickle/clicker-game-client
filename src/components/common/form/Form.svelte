@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { classNames } from "@utils/generic";
+  import { classNames, styles } from "@utils/generic";
   import { createEventDispatcher } from "svelte";
 
   type $$Events = {
@@ -7,6 +7,8 @@
       currentTarget: EventTarget & HTMLFormElement;
     };
   };
+
+  export let gap: string = "16px";
 
   let className: string = "";
   export { className as class };
@@ -30,12 +32,22 @@
   };
 </script>
 
-<form class={classNames("form", className)} {id} {style} on:submit={handleSubmit}>
+<form
+  class={classNames("form", className)}
+  {id}
+  style={styles({ "--gap": gap }) + style}
+  on:submit={handleSubmit}
+>
   <slot />
 </form>
 
 <style lang="scss">
   form {
-    position: relative;
+    $gap: var(--gap);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $gap;
   }
 </style>

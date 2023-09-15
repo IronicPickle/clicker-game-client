@@ -2,6 +2,8 @@ import axios, { AxiosError } from "axios";
 import config from "@config/config";
 import StorageItem from "@utils/StorageItem";
 import { log } from "@utils/generic";
+import type { ApiError } from "@shared/ts/api/generic";
+import { GenericErrorCode } from "@shared/enums/api/generic";
 
 export interface APIResponsePaginated<T> {
   items: T[];
@@ -37,18 +39,9 @@ api.interceptors.request.use(async config => {
   return config;
 });
 
-export type ApiErrors<D> = {
-  failed: boolean;
-  generic?: string[];
-} & Partial<Record<keyof D, string[]>>;
-
-interface ErrorData<D> {
-  message: ApiErrors<D>;
-}
-
 api.interceptors.response.use(
   async res => res,
-  async (err: AxiosError<ErrorData<any>>) => {
+  async (err: AxiosError<ApiError<any>>) => {
     const isUnauthorised = err.response?.status === 401;
 
     if (isUnauthorised) {
@@ -59,14 +52,16 @@ api.interceptors.response.use(
   },
 );
 
-export const isAxiosError = <D>(err: any): err is AxiosError<ErrorData<D>> => err.isAxiosError;
+export const isAxiosError = <K extends string | number | symbol>(
+  err: any,
+): err is AxiosError<ApiError<K>> => err.isAxiosError;
 
-export const getErrsFromApiErr = <D>(err: any): ApiErrors<D> => {
+export const getErrorFromApiErr = <K extends string | number | symbol>(err: any): ApiError<K> => {
   log(err);
-  if (isAxiosError<D>(err)) {
-    const message = err.response?.data.message;
-    if (message) return message;
+  if (isAxiosError<K>(err)) {
+    const data = err.response?.data;
+    if (data) return data;
   }
 
-  return { failed: true, generic: err.message ?? err } as ApiErrors<D>;
+  return { error: err.message ?? err, errorCode: GenericErrorCode.AxiosError } as ApiError<K>;
 };

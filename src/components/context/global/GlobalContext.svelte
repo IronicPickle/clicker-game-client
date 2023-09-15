@@ -16,7 +16,18 @@
 
     session?: Readable<GetSessionRes | undefined>;
     sessionIsLoading?: Readable<boolean>;
-    sessionErrs?: Readable<ApiErrors<GetSessionReq>>;
+    sessionError?: Readable<ApiError<keyof GetSessionReq>>;
+    createSessionIsLoading?: Readable<boolean>;
+    createSessionError?: Readable<ApiError<keyof CreateGameDataReq>>;
+    createSession?: (
+      reqData: CreateSessionReq,
+    ) => Promise<RequestRes<CreateSessionRes, CreateSessionReq>>;
+
+    gameData?: Readable<GetGameDataRes | undefined>;
+    gameDataIsLoading?: Readable<boolean>;
+    gameDataError?: Readable<ApiError<keyof GetGameDataReq>>;
+    createGameDataIsLoading?: Readable<boolean>;
+    createGameDataError?: Readable<ApiError<keyof CreateGameDataReq>>;
   }
 
   const screen = writable<Screen>("start");
@@ -49,7 +60,7 @@
 </script>
 
 <script lang="ts">
-  import { readable, Readable, Writable, writable } from "svelte/store";
+  import { Readable, Writable, writable } from "svelte/store";
 
   import { getContext, setContext, SvelteComponent } from "svelte";
   import { Tweened, tweened } from "svelte/motion";
@@ -57,9 +68,21 @@
   import useRpmReduction from "./hooks/useRpmReduction";
   import useIsAccelerating from "./hooks/useIsAccelerating";
   import useMoneyEarned, { moneyEarnedInterval } from "./hooks/useMoneyEarned";
-  import type { GetSessionReq, GetSessionRes } from "@shared/ts/api/session";
+  import type {
+    CreateSessionReq,
+    CreateSessionRes,
+    GetSessionReq,
+    GetSessionRes,
+  } from "@shared/ts/api/session";
   import useSession from "./hooks/useSession";
-  import type { ApiErrors } from "@api/api";
+  import type { ApiError } from "@shared/ts/api/generic";
+  import useGameData from "./hooks/useGameData";
+  import type {
+    CreateGameDataReq,
+    GetGameDataReq,
+    GetGameDataRes,
+  } from "@src/../../clicker-game-shared/ts/api/gameData";
+  import type { RequestRes } from "@api/hooks/useRequest";
 
   const rpmReductionDelay = 1000;
   const rpmReductionRate = 0.5;
@@ -74,14 +97,46 @@
 
   const { isAccelerating } = useIsAccelerating(rpm);
 
-  const { isLoading, errs, data } = useSession();
+  const {
+    session,
+    getIsLoading: sessionIsLoading,
+    getError: sessionError,
+
+    createIsLoading: createSessionIsLoading,
+    createError: createSessionError,
+    create: createSession,
+  } = useSession();
+
+  const {
+    gameData,
+    getIsLoading: gameDataIsLoading,
+    getError: gameDataError,
+
+    createIsLoading: createGameDataIsLoading,
+    createError: createGameDataError,
+  } = useGameData(session);
+
+  $: console.log({ $session, $gameData });
 
   setContext("global", {
     ...defaultGlobalContext,
+
     isAccelerating,
-    session: data,
-    sessionIsLoading: isLoading,
-    sessionErrs: errs,
+
+    session,
+    sessionIsLoading,
+    sessionError,
+
+    createSessionIsLoading,
+    createSessionError,
+    createSession,
+
+    gameData,
+    gameDataIsLoading,
+    gameDataError,
+
+    createGameDataIsLoading,
+    createGameDataError,
   });
 </script>
 

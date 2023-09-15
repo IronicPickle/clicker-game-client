@@ -1,7 +1,7 @@
 import type { ChangeData } from "@ts/form";
 import { writable, get } from "svelte/store";
 import type Validator from "@shared/utils/Validator";
-import type { ApiErrors } from "@api/api";
+import type { ValidationErrors } from "@shared/ts/api/generic";
 import { isBoolean } from "@shared/utils/generic";
 
 export default <IS extends object>(
@@ -12,15 +12,15 @@ export default <IS extends object>(
   },
 ) => {
   const values = writable(initialValues);
-  const errs = writable({ failed: false } as ApiErrors<IS>);
+  const validation = writable({ failed: false } as ValidationErrors<keyof IS>);
 
-  const updateErrs = <N extends keyof IS>(name: N, errors: string[]) => {
-    errs.update(errs => {
-      const newErrs = { ...errs, [name]: errors };
-      if (errors.length === 0) delete newErrs[name];
-      const failed = Object.values(newErrs).some(err => !isBoolean(err) && err);
+  const updateValidation = <N extends keyof IS>(name: N, errors: string[]) => {
+    validation.update(validation => {
+      const newValidation = { ...validation, [name]: errors };
+      if (errors.length === 0) delete newValidation[name];
+      const failed = Object.values(newValidation).some(err => !isBoolean(err) && err);
 
-      return { ...newErrs, failed };
+      return { ...newValidation, failed };
     });
   };
 
@@ -33,13 +33,13 @@ export default <IS extends object>(
   };
 
   const validate = <N extends keyof IS>(name: N) => {
-    if (!getValidators) return { failed: false } as ApiErrors<IS>;
+    if (!getValidators) return { failed: false } as ValidationErrors<keyof IS>;
 
     const currentValues = get(values);
     const validator = getValidators(currentValues)[name];
-    if (!validator) return { failed: false } as ApiErrors<IS>;
+    if (!validator) return { failed: false } as ValidationErrors<keyof IS>;
 
-    updateErrs(name, validator.getErrors());
+    updateValidation(name, validator.getErrors());
   };
 
   const validateAll = () => {
@@ -48,10 +48,10 @@ export default <IS extends object>(
 
   const onSubmit = () => {
     validateAll();
-    const failed = get(errs).failed;
+    const failed = get(validation).failed;
     if (!failed) handle(get(values));
     return !failed;
   };
 
-  return { values, errs, onChange, onSubmit };
+  return { values, validation, onChange, onSubmit };
 };

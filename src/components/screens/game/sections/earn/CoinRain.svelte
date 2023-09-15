@@ -3,10 +3,11 @@
   import { coins } from "@constants/generic";
   import { moneyToCoins } from "@utils/generic";
   import { onMount } from "svelte";
-  import type { CoinDataExtended } from "./Coin.svelte";
-  import Coin from "./Coin.svelte";
+  import type { CoinDataExtended } from "./CoinIcon.svelte";
+  import CoinIcon from "./CoinIcon.svelte";
   import useDynamicArray from "@hooks/useDynamicArray";
   import { randomNum } from "@shared/utils/generic";
+  import type { Coin } from "@ts/generic";
 
   const { moneyEarned } = getGlobalContext();
 
@@ -25,11 +26,11 @@
       const newCoins: CoinDataExtended[] = [];
 
       for (const type in coinCounts) {
-        const coinCount = coinCounts[type];
+        const coinCount = coinCounts[type as Coin];
         // for (let i = 0; i < coinCount; i++) {
         if (coinCount > 0) {
           newCoins.push({
-            ...coins[type],
+            ...coins[type as Coin],
             key: crypto.randomUUID(),
             duration: randomNum(maxDuration / 2, maxDuration),
             delay: randomNum(maxDelay / 2, maxDelay),
@@ -50,7 +51,7 @@
   {#each $queue as { coins }}
     {#each coins as coinData}
       {#key coinData.key}
-        <Coin {coinData} />
+        <CoinIcon {coinData} />
       {/key}
     {/each}
   {/each}
